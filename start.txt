@@ -1,0 +1,578 @@
+###For divide_reads.pl
+##my ($project_set, $fastq_remote_directory(or cluster directory), $sample_id, $readgroup_tag, $sample_lane_id, $build, $input_bam) = split(/,/);
+###For cluster.pl
+##my ($project_set, $fastq_remote_directory, $sample_id, readgroup_tag, $sample_lane_id, $build) = split(/,/);
+##my $build = GRCm38, MGSCv37, mm9 for mouse, CG_37, GRCh37, or hg19 for human
+##type = Simple, CG, or recent read runs
+#
+##family, main directory, sample_id, read group, lane_id, referance build, BAM location
+#
+#1510 /mnt/Synology/USB2/Clinical/WES/1510/Father_1510 1510-2 GeneDX 1414813 GRCh37 /mnt/Synology/USB2/Clinical/WES/1510/Father_1510/1510-2_1414813.bam
+#1510 /mnt/Synology/USB2/Clinical/WES/1510/Mother_1510 1510-1 GeneDX 1414812 GRCh37 /mnt/Synology/USB2/Clinical/WES/1510/Mother_1510/1510-1_1414812.bam
+#1510 /mnt/Synology/USB2/Clinical/WES/1510/Proband_1510 1510-0 GeneDX 1414811 GRCh37 /mnt/Synology/USB2/Clinical/WES/1510/Proband_1510/1510-0_1414811.bam
+#
+#1327 /mnt/Synology/USB2/Clinical/WES/1327/Father_1327 1327-2 GeneDX 1416305 GRCh37 /mnt/Synology/USB2/Clinical/WES/1327/Father_1327/1327-2_1416305.bam
+#1327 /mnt/Synology/USB2/Clinical/WES/1327/Mother_1327 1327-1 GeneDX 1416304 GRCh37 /mnt/Synology/USB2/Clinical/WES/1327/Mother_1327/1327-1_1416304.bam
+#1327 /mnt/Synology/USB2/Clinical/WES/1327/Proband_1327 1327-0 GeneDX 1416303 GRCh37 /mnt/Synology/USB2/Clinical/WES/1327/Proband_1327/1327-0_1416303.bam
+#
+#1814 /mnt/Synology/USB2/Clinical/WES/1814/Father_1814 1814-2 GeneDX 1314163 GRCh37 /mnt/Synology/USB2/Clinical/WES/1814/Father_1814/1814-2_1314163.bam
+#1814 /mnt/Synology/USB2/Clinical/WES/1814/Mother_1814 1814-1 GeneDX 1314162 GRCh37 /mnt/Synology/USB2/Clinical/WES/1814/Mother_1814/1814-1_1314162.bam
+#1814 /mnt/Synology/USB2/Clinical/WES/1814/Proband_1814 1814-0 GeneDX 1314161 GRCh37 /mnt/Synology/USB2/Clinical/WES/1814/Proband_1814/1814-0_1314161.bam
+#
+#2177 /mnt/Synology/USB2/Clinical/WES/2177/Father_2177 2177-2 GeneDX 1464195 GRCh37 /mnt/Synology/USB2/Clinical/WES/2177/Father_2177/2177-2_1464195.bam
+#2177 /mnt/Synology/USB2/Clinical/WES/2177/Mother_2177 2177-1 GeneDX 1464194 GRCh37 /mnt/Synology/USB2/Clinical/WES/2177/Mother_2177/2177-1_1464194.bam
+#2177 /mnt/Synology/USB2/Clinical/WES/2177/Probrand_2177 2177-0 GeneDX 1464193 GRCh37 /mnt/Synology/USB2/Clinical/WES/2177/Proband_2177/2177-0_1464193.bam
+#
+#2707 /mnt/Synology/USB2/Clinical/WES/2707/Father_2707 2707-2 GeneDX 1492366 GRCh37 /mnt/Synology/USB2/Clinical/WES/2707/Father_2707/2707-2_1492366.bam
+#2707 /mnt/Synology/USB2/Clinical/WES/2707/Mother_2707 2707-1 GeneDX 1492365 GRCh37 /mnt/Synology/USB2/Clinical/WES/2707/Mother_2707/2707-1_1492365.bam
+#2707 /mnt/Synology/USB2/Clinical/WES/2707/Proband_2707 2707-0 GeneDX 1492364 GRCh37 /mnt/Synology/USB2/Clinical/WES/2707/Proband_2707/2707-0_1492364.bam
+#
+#1257 /mnt/Synology/USB2/Clinical/WES/1257/Father_1257 1257-2 GeneDX 1431402 GRCh37 /mnt/Synology/USB2/Clinical/WES/1257/Father_1257/1257-2_1431402.bam
+#1257 /mnt/Synology/USB2/Clinical/WES/1257/Mother_1257 1257-1 GeneDX 1431401 GRCh37 /mnt/Synology/USB2/Clinical/WES/1257/Mother_1257/1257-1_1431401.bam
+#1257 /mnt/Synology/USB2/Clinical/WES/1257/Proband_1257 1257-0 GeneDX 1431400 GRCh37 /mnt/Synology/USB2/Clinical/WES/1257/Proband_1257/1257-0_1431400.bam
+#
+#1978 /mnt/Synology/USB2/Clinical/WES/1978/Father_1978 1978-2 GeneDX 1314654 GRCh37 /mnt/Synology/USB2/Clinical/WES/1978/Father_1978/1978-2_1314654.bam
+#1978 /mnt/Synology/USB2/Clinical/WES/1978/Mother_1978 1978-1 GeneDX 1314653 GRCh37 /mnt/Synology/USB2/Clinical/WES/1978/Mother_1978/1978-1_1314653.bam
+#1978 /mnt/Synology/USB2/Clinical/WES/1978/Proband_1978 1978-0 GeneDX 1314652 GRCh37 /mnt/Synology/USB2/Clinical/WES/1978/Proband_1978/1978-0_1314652.bam
+#
+#1630 /mnt/Synology/USB2/Clinical/WES/1630/Father_1630 1630-2 GeneDX 1312636 GRCh37 /mnt/Synology/USB2/Clinical/WES/1630/Father_1630/1630-2_1312636.bam
+#1630 /mnt/Synology/USB2/Clinical/WES/1630/Mother_1630 1630-1 GeneDX 1312635 GRCh37 /mnt/Synology/USB2/Clinical/WES/1630/Mother_1630/1630-1_1312635.bam
+#1630 /mnt/Synology/USB2/Clinical/WES/1630/Proband_1630 1630-0 GeneDX 1312634 GRCh37 /mnt/Synology/USB2/Clinical/WES/1630/Proband/_16301630-0_1312634.bam
+#
+#2228 /mnt/Synology/USB2/Clinical/WES/2228/Father_2228 2228-2 GeneDX 1308153 GRCh37 /mnt/Synology/USB2/Clinical/WES/2228/Father_2228/2228-2_1308153.bam
+#2228 /mnt/Synology/USB2/Clinical/WES/2228/Mother_2228 2228-1 GeneDX 1308152 GRCh37 /mnt/Synology/USB2/Clinical/WES/2228/Mother_2228/2228-1_1308152.bam
+#2228 /mnt/Synology/USB2/Clinical/WES/2228/Proband_2228 2228-0 GeneDX 1308151 GRCh37 /mnt/Synology/USB2/Clinical/WES/2228/Proband_2228/2228-0_1308151.bam
+#
+#1810 /mnt/Synology/USB2/Clinical/WES/1810/Father_1810 1810-2 GeneDX 1463266 GRCh37 /mnt/Synology/USB2/Clinical/WES/1810/Father_1810/1810-2_1463266.bam
+#1810 /mnt/Synology/USB2/Clinical/WES/1810/Mother_1810 1810-1 GeneDX 1463265 GRCh37 /mnt/Synology/USB2/Clinical/WES/1810/Mother_1810/1810-1_1463265.bam
+#1810 /mnt/Synology/USB2/Clinical/WES/1810/Proband_1810 1810-0 GeneDX 1463264 GRCh37 /mnt/Synology/USB2/Clinical/WES/1810/Proband_1810/1810-0_1463264.bam
+#
+#1940 /mnt/Synology/USB2/Clinical/WES/1940/Father_1940 1940-2 GeneDX 1320704 GRCh37 /mnt/Synology/USB2/Clinical/WES/1940/Father_1940/1940-2_1320704.bam
+#1940 /mnt/Synology/USB2/Clinical/WES/1940/Mother_1940 1940-1 GeneDX 1320703 GRCh37 /mnt/Synology/USB2/Clinical/WES/1940/Mother_1940/1940-1_1320703.bam
+#1940 /mnt/Synology/USB2/Clinical/WES/1940/Proband_1940 1940-0 GeneDX 1320702 GRCh37 /mnt/Synology/USB2/Clinical/WES/1940/Proband_1940/1940-0_1320702.bam
+#
+#1250 /mnt/Synology/USB2/Clinical/WES/1250/Father_1250 1250-2 GeneDX 1436156 GRCh37 /mnt/Synology/USB2/Clinical/WES/1250/Father_1250/1250-2_1436156.bam
+#1250 /mnt/Synology/USB2/Clinical/WES/1250/Mother_1250 1250-1 GeneDX 1436155 GRCh37 /mnt/Synology/USB2/Clinical/WES/1250/Mother_1250/1250-1_1436155.bam
+#1250 /mnt/Synology/USB2/Clinical/WES/1250/Proband_1250 1250-0 GeneDX 1436154 GRCh37 /mnt/Synology/USB2/Clinical/WES/1250/Proband_1250/1250-0_1436154.bam
+#
+#1533 /mnt/Synology/USB2/Clinical/WES/1533/Father_1533 1533-2 GeneDX 1331268 GRCh37 /mnt/Synology/USB2/Clinical/WES/1533/Father_1533/1533-2_1331268.bam
+#1533 /mnt/Synology/USB2/Clinical/WES/1533/Mother_1533 1533-1 GeneDX 1331267 GRCh37 /mnt/Synology/USB2/Clinical/WES/1533/Mother_1533/1533-1_1331267.bam
+#1533 /mnt/Synology/USB2/Clinical/WES/1533/Proband_1533 1533-0 GeneDX 1331266 GRCh37 /mnt/Synology/USB2/Clinical/WES/1533/Proband_1533/1533-0_1331266.bam
+#
+#2644 /mnt/Synology/USB2/Clinical/WES/2644/Father_2644 2644-2 GeneDX 1562898 GRCh37 /mnt/Synology/USB2/Clinical/WES/2644/Father_2644/2644-2_1562898.bam
+#2644 /mnt/Synology/USB2/Clinical/WES/2644/Mother_2644 2644-1 GeneDX 1562897 GRCh37 /mnt/Synology/USB2/Clinical/WES/2644/Mother_2644/2644-1_1562897.bam
+#2644 /mnt/Synology/USB2/Clinical/WES/2644/Proband_2644 2644-0 GeneDX 1562896 GRCh37 /mnt/Synology/USB2/Clinical/WES/2644/Proband_2644/2644-0_1562896.bam
+#
+#2756 /mnt/Synology/USB2/Clinical/WES/2756/Father_2756 2756-2 GeneDX 1552724 GRCh37 /mnt/Synology/USB2/Clinical/WES/2756/Father_2756/2756-2_1552724.bam
+#2756 /mnt/Synology/USB2/Clinical/WES/2756/Mother_2756 2756-1 GeneDX 1552723 GRCh37 /mnt/Synology/USB2/Clinical/WES/2756/Mother_2756/2756-1_1552723.bam
+#2756 /mnt/Synology/USB2/Clinical/WES/2756/Proband_2756 2756-0 GeneDX 1552722 GRCh37 /mnt/Synology/USB2/Clinical/WES/2756/Proband_2756/2756-0_1552722.bam
+#
+#1841 /mnt/Synology/USB2/Clinical/WES/1841/Father_1841 1841-2 GeneDX 1337981 GRCh37 /mnt/Synology/USB2/Clinical/WES/1841/Father_1841/1841-2_1337981.bam
+#1841 /mnt/Synology/USB2/Clinical/WES/1841/Mother_1841 1841-1 GeneDX 1337980 GRCh37 /mnt/Synology/USB2/Clinical/WES/1841/Mother_1841/1841-1_1337980.bam
+#1841 /mnt/Synology/USB2/Clinical/WES/1841/Proband_1841 1841-0 GeneDX 1337979 GRCh37 /mnt/Synology/USB2/Clinical/WES/1841/Proband_1841/1841-0_1337979.bam
+#
+#2311 /mnt/Synology/USB2/Clinical/WES/2311/Father_2311 2311-2 GeneDX 1417190 GRCh37 /mnt/Synology/USB2/Clinical/WES/2311/Father_2311/2311-2_1417190.bam
+#2311 /mnt/Synology/USB2/Clinical/WES/2311/Mother_2311 2311-1 GeneDX 1417189 GRCh37 /mnt/Synology/USB2/Clinical/WES/2311/Mother_2311/2311-1_1417189.bam
+#2311 /mnt/Synology/USB2/Clinical/WES/2311/Proband_2311 2311-0 GeneDX 1417188 GRCh37 /mnt/Synology/USB2/Clinical/WES/2311/Proband_2311/2311-0_1417188.bam
+#
+#2301 /mnt/Synology/USB2/Clinical/WES/2301/Father_2301 2301-2 GeneDX 1421433 GRCh37 /mnt/Synology/USB2/Clinical/WES/2301/Father_2301/2301-2_1421433.bam
+#2301 /mnt/Synology/USB2/Clinical/WES/2301/Mother_2301 2301-1 GeneDX 1421432 GRCh37 /mnt/Synology/USB2/Clinical/WES/2301/Mother_2301/2301-1_1421432.bam
+#2301 /mnt/Synology/USB2/Clinical/WES/2301/Proband_2301 2301-0 GeneDX 1402737 GRCh37 /mnt/Synology/USB2/Clinical/WES/2301/Proband_2301/2301-0_1402737.bam
+#
+#2369 /mnt/Synology/USB2/Clinical/WES/2301/Father_2369 2369-2 GeneDX 1430712 GRCh37 /mnt/Synology/USB2/Clinical/WES/2369/Father_2369/2369-2_1430712.bam
+#2369 /mnt/Synology/USB2/Clinical/WES/2301/Mother_2369 2369-1 GeneDX 1430711 GRCh37 /mnt/Synology/USB2/Clinical/WES/2369/Mother_2369/2369-1_1430711.bam
+#2369 /mnt/Synology/USB2/Clinical/WES/2301/Proband_2369 2369-0 GeneDX 1430710 GRCh37 /mnt/Synology/USB2/Clinical/WES/2369/Proband_2369/2369-0_1430710.bam
+#
+##
+#
+#Elliott_Rhesus_Exomes
+#
+#Elliott_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Elliott/Experiments/41933-1 41933-1 Rhesus1 NoIndex_L001 Mmul8
+#Elliott_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Elliott/Experiments/41566-1 41566-1 Rhesus1 NoIndex_L001 Mmul8
+#Elliott_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Elliott/Experiments/40861-2 40861-2 Rhesus1 NoIndex_L001 Mmul8
+#Elliott_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Elliott/Experiments/39299-1 39299-1 Rhesus1 NoIndex_L001 Mmul8
+#
+##Tulane_Rhesus_Exomes
+#cat /mnt/Synology/USB1/Monkey/Tulane/download2.txt | awk '{command="./fastq-dump --origfmt -I --split-files -O /mnt/Synology/USB1/Monkey/Tulane/Experiments/"$1" --gzip "$1; print command; system(command)}'
+#./fastq-dump  --origfmt -I --split-files -O /mnt/Synology/Experiments/Monkey/Tulane/Experiments/SRR1519169 --gzip  SRR1519169
+#                  
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519169 TU-12 SRR1519169 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519176 TU-101 SRR1519176 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519177 TU-102 SRR1519177 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519178 TU-103 SRR1519178 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519179 TU-104 SRR1519179 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519180 TU-105 SRR1519180 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519283 TU-106 SRR1519283 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519284 TU-107 SRR1519284 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519285 TU-108 SRR1519285 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1519286 TU-109 SRR1519286 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521156 TU-110 SRR1521156 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521157 TU-111 SRR1521157 NoIndex_L001 Mmul8
+##(extremely high quality score of 93) Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521159 TU-113 SRR1521159 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521160 TU-114 SRR1521160 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521161 TU-115 SRR1521161 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521162 TU-116 SRR1521162 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521163 TU-117 SRR1521163 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521164 TU-118 SRR1521164 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521165 TU-119 SRR1521165 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521166 TU-120 SRR1521166 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521167 TU-121 SRR1521167 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521168 TU-122 SRR1521168 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521169 TU-123 SRR1521169 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521170 TU-124 SRR1521170 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521171 TU-125 SRR1521171 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521172 TU-126 SRR1521172 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521173 TU-127 SRR1521173 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521174 TU-128 SRR1521174 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521175 TU-129 SRR1521175 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521185 TU-130 SRR1521185 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521186 TU-131 SRR1521186 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521187 TU-132 SRR1521187 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521188 TU-133 SRR1521188 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521189 TU-134 SRR1521189 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521193 TU-135 SRR1521193 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521194 TU-136 SRR1521194 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521196 TU-137 SRR1521196 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521202 TU-138 SRR1521202 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521203 TU-139 SRR1521203 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521205 TU-140 SRR1521205 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521209 TU-142 SRR1521209 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521211 TU-143 SRR1521211 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521212 TU-144 SRR1521212 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521213 TU-145 SRR1521213 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521214 TU-146 SRR1521214 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521215 TU-147 SRR1521215 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521216 TU-148 SRR1521216 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521217 TU-149 SRR1521217 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521218 TU-150 SRR1521218 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521219 TU-151 SRR1521219 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521220 TU-152 SRR1521220 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521221 TU-153 SRR1521221 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521222 TU-154 SRR1521222 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521223 TU-155 SRR1521223 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521224 TU-156 SRR1521224 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521225 TU-157 SRR1521225 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521226 TU-158 SRR1521226 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521227 TU-159 SRR1521227 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521229 TU-161 SRR1521229 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521230 TU-162 SRR1521230 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521231 TU-163 SRR1521231 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521232 TU-164 SRR1521232 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521233 TU-165 SRR1521233 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521234 TU-166 SRR1521234 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521235 TU-167 SRR1521235 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521236 TU-168 SRR1521236 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521237 TU-169 SRR1521237 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521238 TU-170 SRR1521238 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521239 TU-171 SRR1521239 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521240 TU-172 SRR1521240 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1521241 TU-173 SRR1521241 NoIndex_L001 Mmul8
+#Tulane_Rhesus_Exomes /mnt/Synology/USB1/Monkey/Tulane/Experiments/SRR1536371 TU-112 SRR1536371 NoIndex_L001 Mmul8
+#
+##UW (yes)
+#
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1036_0/11272013_74706/FASTQ 1036_0 11272013_74706 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1036_1/11272013_74707/FASTQ 1036_1 11272013_74707 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1036_2/11272013_74708/FASTQ 1036_2 11272013_74708 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1270_0/11272013_74709/FASTQ 1270_0 11272013_74709 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1270_1/11272013_74710/FASTQ 1270_1 11272013_74710 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1270_2/11272013_74711/FASTQ 1270_2 11272013_74711 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1351_0/11272013_74712/FASTQ 1351_0 11272013_74712 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1351_1/11272013_74713/FASTQ 1351_1 11272013_74713 NoIndex_L001 GRCh37
+#UW /mnt/Synology/Experiments/UW/Experiments/fromBAM/1351_2/11272013_74714/FASTQ 1351_2 11272013_74714 NoIndex_L001 GRCh37
+#
+##ACC (yes)
+#
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150715_D00108_0365_AC6JMHANXX_Project_sherre-ES1/Sample_1090-0 1090-0 150715_D00108_0365_AC6JMHANXX ATCACG_L008 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150715_D00108_0365_AC6JMHANXX_Project_sherre-ES1/Sample_1090-1 1090-1 150715_D00108_0365_AC6JMHANXX CGATGT_L008 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150715_D00108_0365_AC6JMHANXX_Project_sherre-ES1/Sample_1090-2 1090-2 150715_D00108_0365_AC6JMHANXX TTAGGC_L008 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150715_D00108_0365_AC6JMHANXX_Project_sherre-ES1/Sample_1173-0-B2 1173-0-B2 150715_D00108_0365_AC6JMHANXX TGACCA_L008 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150715_D00108_0365_AC6JMHANXX_Project_sherre-ES1/Sample_1173-1-E1 1173-1-E1 150715_D00108_0365_AC6JMHANXX ACAGTG_L008 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150715_D00108_0365_AC6JMHANXX_Project_sherre-ES1/Sample_1173-2 1173-2 150715_D00108_0365_AC6JMHANXX ACTTGA_L008 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC2/Sample_1175-0 1175-0 150724_D00108_0369_AC6UTJANXX ATCACG_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC2/Sample_1175-1 1175-1 150724_D00108_0369_AC6UTJANXX CGATGT_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC2/Sample_1175-2 1175-2 150724_D00108_0369_AC6UTJANXX TTAGGC_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC2/Sample_1175-4 1175-4 150724_D00108_0369_AC6UTJANXX TGACCA_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC2/Sample_1339-0 1339-0 150724_D00108_0369_AC6UTJANXX ACAGTG_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC2/Sample_1339-1 1339-1 150724_D00108_0369_AC6UTJANXX ACTTGA_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC3/Sample_1339-2 1339-2 150724_D00108_0369_AC6UTJANXX ATCACG_L002 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC3/Sample_1588-0 1588-0 150724_D00108_0369_AC6UTJANXX CGATGT_L002 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC3/Sample_1588-1 1588-1 150724_D00108_0369_AC6UTJANXX TTAGGC_L002 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC3/Sample_1588-2 1588-2 150724_D00108_0369_AC6UTJANXX TGACCA_L002 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC3/Sample_1629-0 1629-0 150724_D00108_0369_AC6UTJANXX ACAGTG_L002 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC3/Sample_1629-1 1629-1 150724_D00108_0369_AC6UTJANXX ACTTGA_L002 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/150724_D00108_0369_AC6UTJANXX_Project_sherre-EC3/Sample_1629-2 1629-2 150724_D00108_0369_AC6UTJANXX CTTGTA_L002 GRCh37
+##
+#ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_04/Sample_1289-0 1289-0 160622_D00328_0525_BC9DJKANXX ATCACG_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_04/Sample_1289-1 1289-1 160622_D00328_0525_BC9DJKANXX CGATGT_L001 GRCh37
+#ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_04/Sample_1289-2 1289-2 160622_D00328_0525_BC9DJKANXX TTAGGC_L001 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_04/Sample_1318-0 1318-0 160622_D00328_0525_BC9DJKANXX TGACCA_L001 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_04/Sample_1318-1 1318-1 160622_D00328_0525_BC9DJKANXX ACAGTG_L001 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_04/Sample_1318-2 1318-2 160622_D00328_0525_BC9DJKANXX GCCAAT_L001 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_05/Sample_1324-0 1324-0 160622_D00328_0525_BC9DJKANXX CAGATC_L002 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_05/Sample_1324-1 1324-1 160622_D00328_0525_BC9DJKANXX ACTTGA_L002 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_05/Sample_1324-2 1324-2 160622_D00328_0525_BC9DJKANXX GATCAG_L002 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_05/Sample_1416-0 1416-0 160622_D00328_0525_BC9DJKANXX TAGCTT_L002 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_05/Sample_1416-1 1416-1 160622_D00328_0525_BC9DJKANXX GGCTAC_L002 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_05/Sample_1416-2 1416-2 160622_D00328_0525_BC9DJKANXX CTTGTA_L002 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_06/Sample_1426-0 1426-0 160622_D00328_0525_BC9DJKANXX ATCACG_L003 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_06/Sample_1426-1 1426-1 160622_D00328_0525_BC9DJKANXX CGATGT_L003 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_06/Sample_1426_2 1426_2 160622_D00328_0525_BC9DJKANXX TTAGGC_L003 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_06/Sample_1512-0 1512-0 160622_D00328_0525_BC9DJKANXX TGACCA_L003 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_06/Sample_1512-1 1512-1 160622_D00328_0525_BC9DJKANXX ACAGTG_L003 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_06/Sample_1512-2 1512-2 160622_D00328_0525_BC9DJKANXX GCCAAT_L003 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_07/Sample_1536-0 1536-0 160622_D00328_0525_BC9DJKANXX CAGATC_L004 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_07/Sample_1536-1 1536-1 160622_D00328_0525_BC9DJKANXX ACTTGA_L004 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_07/Sample_1536-2 1536-2 160622_D00328_0525_BC9DJKANXX GATCAG_L004 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_07/Sample_1590-0 1590-0 160622_D00328_0525_BC9DJKANXX TAGCTT_L004 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_07/Sample_1590-1 1590-1 160622_D00328_0525_BC9DJKANXX GGCTAC_L004 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_07/Sample_1590-2 1590-2 160622_D00328_0525_BC9DJKANXX CTTGTA_L004 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_08/Sample_1011-0 1011-0 160622_D00328_0525_BC9DJKANXX ATCACG_L005 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_08/Sample_1011-1 1011-1 160622_D00328_0525_BC9DJKANXX CGATGT_L005 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_08/Sample_1011-2 1011-2 160622_D00328_0525_BC9DJKANXX TTAGGC_L005 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_08/Sample_1020-0 1020-0 160622_D00328_0525_BC9DJKANXX TGACCA_L005 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_08/Sample_1020-1 1020-1 160622_D00328_0525_BC9DJKANXX ACAGTG_L005 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_09/Sample_1020-2 1020-2 160622_D00328_0525_BC9DJKANXX GCCAAT_L006 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_09/Sample_1200-0 1200-0 160622_D00328_0525_BC9DJKANXX CAGATC_L006 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_09/Sample_1200-1 1200-1 160622_D00328_0525_BC9DJKANXX ACTTGA_L006 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_09/Sample_1200-2 1200-2 160622_D00328_0525_BC9DJKANXX GATCAG_L006 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_09/Sample_1201-0 1201-0 160622_D00328_0525_BC9DJKANXX TAGCTT_L006 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_10/Sample_1201-1 1201-1 160622_D00328_0525_BC9DJKANXX GGCTAC_L007 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_10/Sample_1201-2 1201-2 160622_D00328_0525_BC9DJKANXX CTTGTA_L007 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_10/Sample_1328-0 1328-0 160622_D00328_0525_BC9DJKANXX ATCACG_L007 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_10/Sample_1328-1 1328-1 160622_D00328_0525_BC9DJKANXX CGATGT_L007 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_10/Sample_1328-2 1328-2 160622_D00328_0525_BC9DJKANXX TTAGGC_L007 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_11/Sample_1795-0 1795-0 160622_D00328_0525_BC9DJKANXX TGACCA_L008 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_11/Sample_1795-1 1795-1 160622_D00328_0525_BC9DJKANXX ACAGTG_L008 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_11/Sample_1795-2 1795-2 160622_D00328_0525_BC9DJKANXX GCCAAT_L008 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_11/Sample_2352-0 2352-0 160622_D00328_0525_BC9DJKANXX CAGATC_L008 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_11/Sample_2352-1 2352-1 160622_D00328_0525_BC9DJKANXX ACTTGA_L008 GRCh37
+ACC /mnt/Synology/Experiments/ACC/Experiments/160622_D00328_0525_BC9DJKANXX_Project_sherre-ES_11/Sample_2352-2 2352-2 160622_D00328_0525_BC9DJKANXX GATCAG_L008 GRCh37
+#
+##Sahar (Fam3:10B, 6B, 3B) (Fam4:20B, 16B, 15B)
+#
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE5/Sample_1484-2 1484_2 052114_C423GACXX GGCTAC_L007 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE5/Sample_1484-1 1484_1 052114_C423GACXX TAGCTT_L007 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE5/Sample_1484-0 1484_0 052114_C423GACXX GATCAG_L007 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE5/Sample_1172-0 1172_0 052114_C423GACXX CTTGTA_L007 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE3/Sample_10B 10B 052114_C423GACXX TGACCA_L006 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE3/Sample_6B 6B 052114_C423GACXX ACAGTG_L006 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE3/Sample_3B 3B 052114_C423GACXX TTAGCC_L006 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE2/Sample_20B 20B 052114_C423GACXX CGATGT_L005 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE2/Sample_16B 16B 052114_C423GACXX ATCACG_L005 GRCh37
+#Sahar /mnt/Synology/Experiments/Sahar/Experiments/140423_SN404_0312_AC423GACXX_Project_sherre-SE2/Sample_15B 15B 052114_C423GACXX CTTGTA_L005 GRCh37
+#
+##K47445 (yes) negative Marden-Walker
+#
+#K47445 /mnt/Synology/Experiments/K47445/Experiments/Sample_94131 94131 NoIndex_L001 GRCh37 /mnt/Synology/Experiments/K47445/Experiments/sherr_uwcmg_mnmw_1/bamFiles/K47445-29107.94131.bam
+#K47445 /mnt/Synology/Experiments/K47445/Experiments/Sample_94132 94132 NimblegenV2_M NoIndex_L001 GRCh37 /mnt/Synology/Experiments/K47445/Experiments/sherr_uwcmg_mnmw_1/bamFiles/K47445-29108.94132.bam
+#K47445 /mnt/Synology/Experiments/K47445/Experiments/Sample_94133 94133 NimblegenV2_F NoIndex_L001 GRCh37 /mnt/Synology/Experiments/K47445/Experiments/sherr_uwcmg_mnmw_1/bamFiles/K47445-29109.94133.bam
+#
+##Milo Park (yes)
+#
+#Milo /mnt/Synology/Experiments/External/Karen/Experiments/1302045/fastq_parsed 1302045 6_9_2014_Karen GeneDX_SureSelectV4 hg38 /mnt/Synology/Experiments/External/Karen/Original/1302045.bam
+#Milo /mnt/Synology/Experiments/External/Karen/Experiments/1302046/fastq_parsed 1302046 6_9_2014_Karen GeneDX_SureSelectV4 hg38 /mnt/Synology/Experiments/External/Karen/Original/1302046.bam
+#Milo /mnt/Synology/Experiments/External/Karen/Experiments/1302047/fastq_parsed 1302047 6_9_2014_Karen GeneDX_SureSelectV4 hg38 /mnt/Synology/Experiments/External/Karen/Original/1302047.bam
+#
+#Milo /mnt/Synology/Experiments/External/Karen/Experiments/1302045/fastq_parsed 1302045 6_9_2014_Karen GeneDX_SureSelectV4 GRCh37 /mnt/Synology/Experiments/External/Karen/Original/1302045.bam
+#Milo /mnt/Synology/Experiments/External/Karen/Experiments/1302046/fastq_parsed 1302046 6_9_2014_Karen GeneDX_SureSelectV4 GRCh37 /mnt/Synology/Experiments/External/Karen/Original/1302046.bam
+#Milo /mnt/Synology/Experiments/External/Karen/Experiments/1302047/fastq_parsed 1302047 6_9_2014_Karen GeneDX_SureSelectV4 GRCh37 /mnt/Synology/Experiments/External/Karen/Original/1302047.bam
+#
+##Burke Anthony (yes) 
+#
+#Burke /mnt/Synology/Experiments/Burke/Experiments/101118_GA2/Sample_JL_004 1674_0 101118_GA2_JL_004 L006 GRCh37
+#
+##LaTour (yes)
+#
+#LaTour /mnt/Synology/Experiments/LaTour/Experiments/130301_C1HGWACXX/Sample_125813 1258_13a 130301_C1HGWACXX CAAAAG_L006 GRCh37 /mnt/Synology/USB5/LaTour/Analysis/GRCh37/Align/1258_13a_130301_C1HGWACXX_125813/BAM/1258_13a_130301_C1HGWACXX_125813.recalibrated.bam
+#LaTour /mnt/Synology/Experiments/LaTour/Experiments/130301_C1HGWACXX/Sample_125801 1258_0 130301_C1HGWACXX AAACAT_L006 GRCh37 /mnt/Synology/USB5/LaTour/Analysis/GRCh37/Align/1258_0_130301_C1HGWACXX_125801/BAM/1258_0_130301_C1HGWACXX_125801.recalibrated.bam
+#LaTour /mnt/Synology/Experiments/LaTour/Experiments/101118_GA2/Sample_JL_003 1258_13 101118_GA2 JL_003_L005 GRCh37
+#LaTour /mnt/Synology/Experiments/LaTour/Experiments/101118_GA2/Sample_JL_002 1258_2 101118_GA2 JL_002_L003 GRCh37
+#
+##Suisan (yes)
+#
+#Suisan /mnt/Synology/Experiments/Suisan/Experiments/120306_HS1B/Sample_JL002_index4 1183-1 120306_HS1B TGACCA_L001 GRCh37 /mnt/Synology/USB5/Suisan/Analysis/GRCh37/Align/1183-1/120306_HS1B_JL002_index4/BAM/1183-1_120306_HS1B_JL002_index4.recalibrated.bam
+#Suisan /mnt/Synology/Experiments/Suisan/Experiments/120306_HS1B/Sample_JL002_index2 1183-0 120306_HS1B CGATGT_L001 GRCh37 /mnt/Synology/USB5/Suisan/Analysis/GRCh37/Align/1183-0/120306_HS1B_JL002_index2/BAM/1183-0_120306_HS1B_JL002_index2.recalibrated.bam
+#Suisan /mnt/Synology/Experiments/Suisan/Experiments/101118_GA2/Sample_JL_001 1183-0 101118_GA2 NoIndex_L001 GRCh37
+#Suisan /mnt/Synology/Experiments/Suisan/Experiments/090723_HWUSI/e1 1183-0 090723_HWUSI NoIndex_L001 GRCh37 /mnt/Synology/USB5/Suisan/Analysis/GRCh37/Align/1183-0/090723_HWUSI_E1/BAM/1183-0_090723_HWUSI_E1.recalibrated.bam
+#Suisan /mnt/Synology/Experiments/Suisan/Experiments/090723_HWUSI/e2 1183-0 090723_HWUSI NoIndex_L002 GRCh37 /mnt/Synology/USB5/Suisan/Analysis/GRCh37/Align/1183-0/090723_HWUSI_E2/BAM/1183-0_090723_HWUSI_E2.recalibrated.bam
+#
+##Aicardi
+#
+##Aicardi ES (Agilent)
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1420_0_Blood/120725_HS2B 1420_0_Blood 120725_HS2B GCCAAT_L003 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1420_0_Skin/120725_HS2B 1420_0_Skin 120725_HS2B NoIndex_L002 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1420_1/120725_HS2B 1420_1 120725_HS2B CAGATC_L004 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1420_2/120725_HS2B 1420_2 120725_HS2B ACTTGA_L004 GRCh37
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_0_Brain/120725_HS2B 1875_Brain 120725_HS2B NoIndex_L001 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_0_Blood/120725_HS2B 1875_0 120725_HS2B CGATGT_L003 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_1/120725_HS2B 1875_1 120725_HS2B TTAGGC_L004 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_2/120725_HS2B 1875_2 120725_HS2B TGACCA_L004 GRCh37
+##(note states low amplification)
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Brain/120725_HS2B 1480_Brain 120725_HS2B NoIndex_L005 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Blood/120725_HS2B 1480_0_Blood 120725_HS2B GATCAG_L003 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Brain/120809_HS1A 1480_Brain 120809_HS1A NoIndex_L005 GRCh37
+#
+##Aicardi ES (Nimblegen)
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Blood/120224_HS1A 1480_0_Blood 120224_HS1A TGACCA_L003 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Brain/120224_HS1A 1480_Brain 120224_HS1A CGATGT_L003 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Brain/120418_HSA 1480_Brain 120418_HSA GCCAAT_L006 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_1/120306_HS1B 1480_1 120306_HS1B ACAGTG_L001 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_2/120306_HS1B 1480_2 120306_HS1B GCCAAT_L001 GRCh37
+#
+#Aicardi ES (Other)
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/110724_DNANexus/Sample_1231_0_CCGTCCAT_L002 1231_0 110724_DNANexus CCGTCCAT_L002 GRCh37
+#
+##Aicardi WGS
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Blood/060314_WGS_UW 1480_0_Blood 060314_WGS_UW NoIndex_L001 hg38
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Brain/060314_WGS_UW 1480_Brain 060314_WGS_UW NoIndex_L002 hg38
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_1/060314_WGS_UW 1480_1 060314_WGS_UW NoIndex_L003 hg38
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1480_2/060314_WGS_UW 1480_2 060314_WGS_UW NoIndex_L004 hg38
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_0_Blood/060314_WGS_UW 1875_0 060314_WGS_UW NoIndex_L005 hg38
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_0_Brain/060314_WGS_UW 1875_Brain 060314_WGS_UW NoIndex_L006 hg38
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_1/060314_WGS_UW 1875_1 060314_WGS_UW NoIndex_L007 hg38
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/1875_2/060314_WGS_UW 1875_2 060314_WGS_UW NoIndex_L006 hg38
+#
+##Aicardi (Targeted X Exome) 
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/091124_ILLUMINA_1A5BF1/Sample_1420_0_NoIndex_L006/temp 1420_0 091124_ILLUMINA_1A5BF1 NoIndex_L006 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/091124_ILLUMINA_1A5BF1/Sample_1238_0_NoIndex_L005/temp 1238_0 091124_ILLUMINA_1A5BF1 NoIndex_L005 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/091124_ILLUMINA_1A5BF1/Sample_1251_0_NoIndex_L008/temp 1251_0 091124_ILLUMINA_1A5BF1 NoIndex_L008 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/091124_ILLUMINA_1A5BF1/Sample_1271_0_NoIndex_L007/temp 1271_0 091124_ILLUMINA_1A5BF1 NoIndex_L007 GRCh37
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/100101_AGILENT/Sample_1263_0_NoIndex_L002/temp 1263_0 100101_AGILENT NoIndex_L002 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/100101_AGILENT/Sample_1264_0_NoIndex_L003/temp 1264_0 100101_AGILENT NoIndex_L003 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/100101_AGILENT/Sample_1467_0_NoIndex_L004/temp 1467_0 100101_AGILENT NoIndex_L004 GRCh37
+#
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/100115_ILLUMINA_1A5BF1/Sample_1236_0_NoIndex_L006/temp 1236_0 100115_ILLUMINA_1A5BF1 NoIndex_L006 GRCh37
+#Aicardi /mnt/Synology/Experiments/Aicardi/Experiments/100115_ILLUMINA_1A5BF1/Sample_1274_0_NoIndex_L007/temp 1274_0 100115_ILLUMINA_1A5BF1 NoIndex_L007 GRCh37
+#
+##Complete Genomics
+#
+#/media/Analysis/CG/BAM/1440_0 GS00748-CLS_A09 GS00893-DNA_A01 CG 1440_0
+#/media/Analysis/CG/BAM/1480_0 GS00717-CLS_E03 GS00614-DNA_A01 CG 1480_0
+#/media/Analysis/CG/BAM/1260_0 GS00661-CLS_E04 GS00357-DNA_G02 CG 1260_0
+#/media/Analysis/CG/BAM/1420_0 GS00661-CLS_F04 GS00357-DNA_H02 CG 1420_0
+#/media/Analysis/CG/BAM/1466_0 GS00661-CLS_D04 GS00357-DNA_F02 CG 1466_0
+#
+##my ($project_set, $fastq_remote_directory, $sample_id, readgroup_tag, $sample_lane_id, $build) = split(/,/);
+##my $build = GRCm38, MGSCv37, mm9 for mouse, CG_37, GRCh37, or hg19 for human
+##type = Simple, CG, or recent read runs
+#
+##Mouse:/mnt/Synology/Experiments/Mouse/Experiments
+#
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/110718_HS1A/Sample_JL_005 BTBR 110718_HS1A NoIndex_L004 GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/111028_HS1A/Sample_JL_001 BTBR 110718_HS1A NoIndex_L002 GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/120203_HS2B/Sample_JLBIBR_05 BTBR 120203_HS2B NoIndex_L007 GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/120203_HS2B/Sample_JLINJ_07 ILnJ 120203_HS2B NoIndex_L008 GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/120210_HS3A/Sample_JLIN_8 ILnJ 120210_HS3A NoIndex_L003GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/120203_HS2B/Sample_JLSA_03 S129acc 120203_HS2B NoIndex_L006 GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/120210_HS3A/Sample_JLSA_4 S129acc 120210_HS3A NoIndex_L002 GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/120203_HS2B/Sample_JLSN_01 S129normal 120203_HS2B NoIndex_L005 GRCm38
+#Mouse /mnt/Synology/Experiments/Mouse/Experiments/120210_HS3A/Sample_JLSN_2 S129normal 120210_HS3A NoIndex_L001 GRCm38
+#
+##
+###External
+##
+#
+##Elysa Marco
+#
+#Clinical
+#MarcoE_clinical /mnt/Synology/Extra4/Marco/daughter daughter MAR-001-02 ATCACG_L001 GRCh37
+#MarcoE_clinical /mnt/Synology/Extra4/Marco/father father MAR-001-02 CGATGT_L001 GRCh37
+#
+#Sensory (10 trios of kids with sensory processing disorders)
+#
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM8/Sample_428 428 C5M2RANXX ACAGTG_L008 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM8/Sample_428-1 428-1 C5M2RANXX GCCAAT_L008 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM8/Sample_428-2 428-2 C5M2RANXX CAGATC_L008 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM1/Sample_983 983 C5M2RANXX ATCACG_L001 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM1/Sample_983-1 983-1 C5M2RANXX CGATGT_L001 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM3/Sample_983-2 983-2 C5M2RANXX CTTGTA_L003 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM1/Sample_10149 10149 C5M2RANXX TTAGGC_L001 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM1/Sample_10149-1 10149-1 C5M2RANXX TGACCA_L001 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM2/Sample_10149-2 10149-2 C5M2RANXX ACAGTG_L002 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM2/Sample_10040 10040 C5M2RANXX GCCAAT_L002 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM2/Sample_10040-1 10040-1 C5M2RANXX ACTTGA_L002 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM2/Sample_10040-2 10040-2 C5M2RANXX CAGATC_L002 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM3/Sample_628 628 C5M2RANXX GATCAG_L003 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM3/Sample_628-1 628-1 C5M2RANXX TAGCTT_L003 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM3/Sample_628-2 628-2 C5M2RANXX GGCTAC_L003 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM4/Sample_10167 10167 C5M2RANXX TGACCA_L004 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM5/Sample_10167-1 10167-1 C5M2RANXX ACAGTG_L005 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM5/Sample_10167-2 10167-2 C5M2RANXX GCCAAT_L005 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM4/Sample_522 522 C5M2RANXX ATCACG_L004 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM4/Sample_522-1 522-1 C5M2RANXX CGATGT_L004 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM4/Sample_522-2 522-2 C5M2RANXX TTAGGC_L004 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM5/Sample_10038 10038 C5M2RANXX CAGATC_L005 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM5/Sample_10038-1 10038-1 C5M2RANXX ACTTGA_L005 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM6/Sample_10038-2 10038-2 C5M2RANXX GATCAG_L006 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM6/Sample_10035 10035 C5M2RANXX TAGCTT_L006 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM6/Sample_10035-1 10035-1 C5M2RANXX CTTGTA_L006 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM7/Sample_10035-2 10035-2 C5M2RANXX ATCACG_L007 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM7/Sample_10170 10170 C5M2RANXX CGATGT_L007 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM7/Sample_10170-1 10170-1 C5M2RANXX TTAGGC_L007 GRCh37
+#Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM7/Sample_10170-2 10170-2 C5M2RANXX TGACCA_L007 GRCh37
+##Sensory /mnt/Synology/Experiments/MarcoE/150115_D00108_0305_BC5M2RANXX_Project_marcoe-EM6/Sample_10113 10113 C5M2RANXX GGCTAC_L006 GRCh37
+#
+##Jonathan Stroeber Trio (no)
+#
+#/mnt/Synology/Experiments/External/Jonathan/Experiments/1304721/1304721_ILLUMINA/FASTQ 1304721 1304722_ILLUMINA NoIndex_L001 GRCh37 /mnt/Synology/Experiments/External/Jonathan_Trio/Original/BAM/1304721.bam
+#/mnt/Synology/Experiments/External/Jonathan/Experiments/1304722/1304722_ILLUMINA/FASTQ	NoIndex_L001 1304722 GRCh37 /mnt/Synology/Experiments/External/Jonathan_Trio/Original/BAM/1304722.bam
+#/mnt/Synology/Experiments/External/Jonathan/Experiments/1304723/1304723_ILLUMINA/FASTQ	NoIndex_L001 1304723 GRCh37 /mnt/Synology/Experiments/External/Jonathan_Trio/Original/BAM/1304723.bam
+#
+##1KG
+#
+#1KG /mnt/Synology/Experiments/1000Genomes/HG00105/sequence_read HG00105 SRR711354 130109_SN580_0303_AC1JGKACXX_6_ID12 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG00106/sequence_read HG00106 SRR702073 130109_SN580_0303_AC1JGKACXX_8_ID12 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG00553/sequence_read HG00553 SRR070780 65781 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG00554/sequence_read HG00554 SRR070482 65783 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01073/sequence_read HG01073 ERR031998 BGI-FC81C73ABXX_L1_HUMbodXGBAAAPEI-9 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01148/sequence_read HG01148 SRR765984 130122_SN7001353_0155_BC1MNDACXX_8_ID12 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01149/sequence_read HG01149 SRR765986 130122_SN7001353_0155_BC1MNDACXX_7_ID08 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01501/sequence_read HG01501 SRR701470 130109_SN820_0400_BD1N3GACXX_2_ID01 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01503/sequence_read HG01503 SRR709962 130116_SN601_0392_BD0B35ACXX_4_ID01 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01504/sequence_read HG01504 SRR710112 130117_SN805_0316_AD1MN1ACXX_2_ID01 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01606/sequence_read HG01606 SRR711359 130117_SN805_0316_AD1MN1ACXX_2_ID02 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01668/sequence_read HG01688 SRR702063 130116_SN601_0392_BD0B35ACXX_4_ID03 hg38	
+#1KG /mnt/Synology/Experiments/1000Genomes/HG01777/sequence_read HG01777 SRR711363 130117_SN805_0316_AD1MN1ACXX_2_ID04 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG02219/sequence_read HG02219 SRR790964 162653 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG02220/sequence_read HG02220 SRR716636 130118_SN142_0640_AC1HT3ACXX_5_ID01 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/HG02221/sequence_read HG02221 SRR768529 130119_SN7001157_0205_AD1M9PACXX_5_ID01 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA07051/sequence_read NA07051 SRR013653 BI.PE.090123_SL-XAQ_0001_FC30PNVAAXX.3.srf hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA10851/sequence_read NA10851 SRR766044 130122_SN7001353_0155_BC1MNDACXX_7_ID11 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA11830/sequence_read NA11830 SRR766026 130126_SN738_0353_BC1M7KACXX_5_ID09 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA12005/sequence_read NA12005 SRR718067 130118_SN142_0640_AC1HT3ACXX_8_ID11 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA12154/sequence_read NA12154 SRR702067 130108_SN738_0346_AC1H6GACXX_1_ID06 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA18502/sequence_read NA18502 SRR764722 121213_SN733_0347_BD1HE2ACXX_7_ID08 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA18531/sequence_read NA18531 SRR715903 130115_SN881_0335_BD0B36ACXX_5_ID12 hg38
+##1KG /mnt/Synology/Experiments/1000Genomes/NA18608/sequence_read NA18608 ERR003004 g1kp3-NA18608-NA18608new_1-37-2_1 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA18630/sequence_read NA18630 SRR766040 130126_SN738_0353_BC1M7KACXX_1_ID04 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA18939/sequence_read NA18939 SRR766031 130122_SN7001353_0155_BC1MNDACXX_4_ID02 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA18986/sequence_read NA18986 SRR013895 BI.PE.090204_SL-XAJ_0002_FC30HJ8AAXX.7.srf hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA19005/sequence_read NA19005 SRR715906 130121_SN738_0351_AD1MJUACXX_4_ID07 hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA19130/sequence_read NA19130 SRR013690 BI.PE.090106_SL-XBH_0002_FC30KJPAAXX.6.srf hg38
+#1KG /mnt/Synology/Experiments/1000Genomes/NA19248/sequence_read NA19248 SRR013896 BI.PE.090105_SL-XBB_0003_FC30JW3AAXX.1.srf hg38
+#
+##
+###GMI Clinical Exome 
+##Each sample was run on 4 lanes (over 2 flowcells) as Rapid Run on HiSeq2500
+#
+##R14-32807 SN01893
+#
+#R14-32807 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-32807_SN01893-P_SPackman/141002_SN973_0520_AHAV3LADXX/Sample_SN01893-P SN01893-P AHAV3LADXX NoIndex GRCh37
+#R14-32807 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-32807_SN01893-P_SPackman/141002_SN973_0520_AHAV3LADXX/Sample_SN01894-F SN01894-F AHAV3LADXX NoIndex GRCh37
+#R14-32807 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-32807_SN01893-P_SPackman/141002_SN973_0520_AHAV3LADXX/Sample_SN01895-M SN01895-M AHAV3LADXX NoIndex GRCh37
+#
+#R14-32807 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-32807_SN01893-P_SPackman/141002_SN973_0521_BHAUU6ADXX/Sample_SN01893-P SN01893-P BHAUU6ADXX NoIndex GRCh37
+#R14-32807 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-32807_SN01893-P_SPackman/141002_SN973_0521_BHAUU6ADXX/Sample_SN01894-F SN01894-F BHAUU6ADXX NoIndex GRCh37
+#R14-32807 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-32807_SN01893-P_SPackman/141002_SN973_0521_BHAUU6ADXX/Sample_SN01895-M SN01895-M BHAUU6ADXX NoIndex GRCh37
+#
+##R14-18106 SN01594
+#
+#R14-18106 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18106_SN01594-P_ASlavotinek/140630_SN973_0453_AH9W6DADXX/Sample_SN01594-P SN01594-P AH9W6DADXX NoIndex GRCh37
+#R14-18106 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18106_SN01594-P_ASlavotinek/140630_SN973_0453_AH9W6DADXX/Sample_SN01596-F SN01596-F AH9W6DADXX NoIndex GRCh37
+#R14-18106 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18106_SN01594-P_ASlavotinek/140630_SN973_0453_AH9W6DADXX/Sample_SN01595-M SN01595-M AH9W6DADXX NoIndex GRCh37
+#           
+#R14-18106 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18106_SN01594-P_ASlavotinek/140630_SN973_0454_BH9WFJADXX/Sample_SN01594-P SN01594-P BH9WFJADXX NoIndex GRCh37
+#R14-18106 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18106_SN01594-P_ASlavotinek/140630_SN973_0454_BH9WFJADXX/Sample_SN01596-F SN01596-F BH9WFJADXX NoIndex GRCh37
+#R14-18106 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18106_SN01594-P_ASlavotinek/140630_SN973_0454_BH9WFJADXX/Sample_SN01595-M SN01595-M BH9WFJADXX NoIndex GRCh37
+#
+##R14-20343 SN01609
+#
+#R14-20343 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-20343_SN01609-P_JPuck/140703_SN973_0457_AHA3MEADXX/Sample_SN01609-P SN01609-P AHA3MEADXX NoIndex GRCh37
+#R14-20343 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-20343_SN01609-P_JPuck/140703_SN973_0457_AHA3MEADXX/Sample_SN01610-F SN01610-F AHA3MEADXX NoIndex GRCh37
+#R14-20343 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-20343_SN01609-P_JPuck/140703_SN973_0457_AHA3MEADXX/Sample_SN01611-M SN01611-M AHA3MEADXX NoIndex GRCh37
+#           
+#R14-20343 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-20343_SN01609-P_JPuck/140703_SN973_0458_BHA0VRADXX/Sample_SN01609-P SN01609-P BHA0VRADXX NoIndex GRCh37
+#R14-20343 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-20343_SN01609-P_JPuck/140703_SN973_0458_BHA0VRADXX/Sample_SN01610-F SN01610-F BHA0VRADXX NoIndex GRCh37
+#R14-20343 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-20343_SN01609-P_JPuck/140703_SN973_0458_BHA0VRADXX/Sample_SN01611-M SN01611-M BHA0VRADXX NoIndex GRCh37
+#
+##R14-18112 SN01597
+#
+#R14-18112 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18112_SN01597-P_ASlavotinek/140630_SN973_0453_AH9W6DADXX/Sample_SN01597-P SN01597-P AH9GRPADXX NoIndex hg38
+#R14-18112 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18112_SN01597-P_ASlavotinek/140630_SN973_0453_AH9W6DADXX/Sample_SN01598-F SN01598-F AH9GRPADXX NoIndex hg38
+#R14-18112 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18112_SN01597-P_ASlavotinek/140630_SN973_0453_AH9W6DADXX/Sample_SN01599-M SN01599-M AH9GRPADXX NoIndex hg38
+#           
+#R14-18112 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18112_SN01597-P_ASlavotinek/140630_SN973_0454_BH9WFJADXX/Sample_SN01597-P SN01597-P BH9GRFADXX NoIndex hg38
+#R14-18112 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18112_SN01597-P_ASlavotinek/140630_SN973_0454_BH9WFJADXX/Sample_SN01598-F SN01598-F BH9GRFADXX NoIndex hg38
+#R14-18112 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-18112_SN01597-P_ASlavotinek/140630_SN973_0454_BH9WFJADXX/Sample_SN01599-M SN01599-M BH9GRFADXX NoIndex hg38
+#
+##R14_10753 SNO1405
+#
+#R14_10753 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10753_SN01405-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/Sample_SN01405-P SN01405-P AH9GRPADXX NoIndex GRCh37
+#R14_10753 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10753_SN01405-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/Sample_SN01406-F SN01406-F AH9GRPADXX NoIndex GRCh37
+#R14_10753 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10753_SN01405-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/Sample_SN01407-M SN01407-M AH9GRPADXX NoIndex GRCh37
+#
+#R14_10753 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10753_SN01405-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/Sample_SN01405-P SN01405-P BH9GRFADXX NoIndex GRCh37
+#R14_10753 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10753_SN01405-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/Sample_SN01406-F SN01406-F BH9GRFADXX NoIndex GRCh37
+#R14_10753 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10753_SN01405-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/Sample_SN01407-M SN01407-M BH9GRFADXX NoIndex GRCh37
+#
+##R14_08605 SNO1371
+#
+#R14_08605 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-08605_SN01371-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/Sample_SN01371-P SN01371-P AH9GRPADXX NoIndex GRCh37
+#R14_08605 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-08605_SN01371-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/Sample_SN01372-F SN01372-F AH9GRPADXX NoIndex GRCh37
+#R14_08605 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-08605_SN01371-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/Sample_SN01373-M SN01373-M AH9GRPADXX NoIndex GRCh37
+#
+#R14_08605 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-08605_SN01371-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/Sample_SN01371-P SN01371-P BH9GRFADXX NoIndex GRCh37
+#R14_08605 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-08605_SN01371-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/Sample_SN01372-F SN01372-F BH9GRFADXX NoIndex GRCh37
+#R14_08605 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-08605_SN01371-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/Sample_SN01373-M SN01373-M BH9GRFADXX NoIndex GRCh37
+#
+##R14_10576 SN01401
+#
+#R14_10576 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10576_SN01401-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/SN01401-P SN01401-P AH9GRPADXX NoIndex GRCh37
+#R14_10576 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10576_SN01401-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/SN01402-F SN01402-F AH9GRPADXX NoIndex GRCh37
+#R14_10576 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10576_SN01401-P_ASlavotinek/140505_SN973_0403_AH9GRPADXX/SN01403-M SN01403-M AH9GRPADXX NoIndex GRCh37
+#
+#R14_10576 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10576_SN01401-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/SN01401-P SN01401-P BH9GRFADXX NoIndex GRCh37
+#R14_10576 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10576_SN01401-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/SN01402-F SN01402-F BH9GRFADXX NoIndex GRCh37
+#R14_10576 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-10576_SN01401-P_ASlavotinek/140505_SN973_0404_BH9GRFADXX/SN01403-M SN01403-M BH9GRFADXX NoIndex GRCh37
+#
+##R14_13657 SN01484
+#
+#R14_13657 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/140606_SN973_0433_AH9UNPADXX/Sample_SN01484-P SN01484 AH9UNPADXX NoIndex_L002 GRCh37
+#R14_13657 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/140606_SN973_0434_BH9UTAADXX/Sample_SN01484-P SN01484 BH9UTAADXX NoIndex_L002 GRCh37
+#R14_13657 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/140606_SN973_0433_AH9UNPADXX/Sample_SN01485-F SN01485 AH9UNPADXX NoIndex_L004 GRCh37
+#R14_13657 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/140606_SN973_0434_BH9UTAADXX/Sample_SN01485-F SN01485 BH9UTAADXX NoIndex_L004 GRCh37
+#R14_13657 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/140606_SN973_0433_AH9UNPADXX/Sample_SN01486-M SN01486 AH9UNPADXX NoIndex_L006 GRCh37
+#R14_13657 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/140606_SN973_0434_BH9UTAADXX/Sample_SN01486-M SN01486 BH9UTAADXX NoIndex_L006 GRCh37
+#
+#R14_13657 /mnt/speed/gilberto/Experiments/SN01485_R14_13657_UCLA/fastq_split SN01485 R14_13657 UCLA hg38 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/SN01485-F.sorted.rmdup.realigned.fixed.recalibrated.bam
+#R14_13657 /mnt/speed/gilberto/Experiments/SN01486_R14_13657_UCLA/fastq_split SN01486 R14_13657 UCLA hg38 /coldstorage/gmi/ucsf_germline_exomes/clinical/R14-13657_SN01484-P_RNussbaum/SN01486-M.sorted.rmdup.realigned.fixed.recalibrated.bam
+#
+##R13-42253 SN01204
+#
+#R13_42253 /coldstorage/gmi/ucsf_germline_exomes/clinical/R13-42253/fastq/140226_SN973_0341_BH8U29ADXX/Sample_SN01204-P SN01204 BH8U29ADXX NoIndex_L002 GRCh37
+#R13_42253 /coldstorage/gmi/ucsf_germline_exomes/clinical/R13-42253/fastq/140226_SN973_0341_BH8U29ADXX/Sample_SN01205-M SN01205 BH8U29ADXX NoIndex_L004 GRCh37
+#R13_42253 /coldstorage/gmi/ucsf_germline_exomes/clinical/R13-42253/fastq/140226_SN973_0341_BH8U29ADXX/Sample_SN01206-F SN01206 BH8U29ADXX NoIndex_L006 GRCh37
+#R13_42253 /coldstorage/gmi/ucsf_germline_exomes/clinical/R13-42253/fastq/140226_SN973_0340_AH8TNGADXX/Sample_SN01204-P SN01204 AH8TNGADXX NoIndex_L002 GRCh37
+#R13_42253 /coldstorage/gmi/ucsf_germline_exomes/clinical/R13-42253/fastq/140226_SN973_0340_AH8TNGADXX/Sample_SN01205-M SN01205 AH8TNGADXX NoIndex_L004 GRCh37
+#R13_42253 /coldstorage/gmi/ucsf_germline_exomes/clinical/R13-42253/fastq/140226_SN973_0340_AH8TNGADXX/Sample_SN01206-F SN01206 AH8TNGADXX NoIndex_L006 GRCh37
+#
+##R14_13641
+#
+#R14_13641 /mnt/Synology/Experiments/External/GMI/R14_13641/hg38/1402938/fastq_parsed 1402938 R14_13641 GeneDX_SureSelectV4 GRCh37 /mnt/Synology/Experiments/External/GMI/R14_13641/1402938.bam
+#R14_13641 /mnt/Synology/Experiments/External/GMI/R14_13641/hg38/1404083/fastq_parsed 1404083 R14_13641 GeneDX_SureSelectV4 GRCh37 /mnt/Synology/Experiments/External/GMI/R14_13641/1404083.bam
+#R14_13641 /mnt/Synology/Experiments/External/GMI/R14_13641/hg38/1404084/fastq_parsed 1404084 R14_13641 GeneDX_SureSelectV4 GRCh37 /mnt/Synology/Experiments/External/GMI/R14_13641/1404084.bam
+#
+#R14_13641 /mnt/Synology/Experiments/External/GMI/R14_13641/hg38/1402938/fastq_parsed 1402938 R14_13641 GeneDX_SureSelectV4 hg38 /mnt/Synology/Experiments/External/GMI/R14_13641/1402938.bam
+#R14_13641 /mnt/Synology/Experiments/External/GMI/R14_13641/hg38/1404083/fastq_parsed 1404083 R14_13641 GeneDX_SureSelectV4 hg38 /mnt/Synology/Experiments/External/GMI/R14_13641/1404083.bam
+#R14_13641 /mnt/Synology/Experiments/External/GMI/R14_13641/hg38/1404084/fastq_parsed 1404084 R14_13641 GeneDX_SureSelectV4 hg38 /mnt/Synology/Experiments/External/GMI/R14_13641/1404084.bam
+#
+##
+###GMI external
+##
+#
+#Family-01 /mnt/Synology/Experiments/External/Family-01/proband proband RG1 NoIndex GRCh37
+#Family-01 /mnt/Synology/Experiments/External/Family-01/mother mother RG2 NoIndex GRCh37
+#Family-01 /mnt/Synology/Experiments/External/Family-01/father father RG3 NoIndex GRCh37
+#
+##Ed
+#
+#C254LACXX /coldstorage/gmi/reanalysis/hsiaoe/555085/555085 C254LACXX NimblegenV2 NoIndex_L001 GRCh37
+#

@@ -1,0 +1,202 @@
+#!/usr/bin/perl -w
+use strict;
+
+#snap index -s 20
+#     0    1    2     3     4     5     6     7     8
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+my $date = ($mon + 1) . "_" . $mday . "_" . ($year + 1900);
+#
+my $index = $ARGV[0];
+my $sample_tag = $ARGV[1];
+#
+my $readgroup_tag = $ARGV[2];#one machine run also directory for that run
+my $lane_tag = $ARGV[3];#platform unit
+#
+my $analysis_dir = $ARGV[4];
+#
+my $fastq_local_dir = $ARGV[5];
+#
+my $picard_dir = $ARGV[6];
+my $GATK_dir = $ARGV[7];
+my $remote = $ARGV[8];
+my $bin_dir = $ARGV[9];
+#
+my $fastq_split  = $ARGV[10];
+my $origin = $ARGV[11];
+my $build= $ARGV[12];
+#
+my $reference_genome = $ARGV[13];
+my $bwa_dir = $ARGV[14];
+#
+my $platform_tag = $ARGV[15];#PL TAG
+my $library_tag = $ARGV[16];#i.e. PE_WES
+
+my $sample_name = "$sample_tag" . "_" . "$readgroup_tag" . "_" . "$lane_tag";
+	#Example
+	#"\@RG\tID:$readgroup_tag\tSM:$sample_tag\tLB:$library_tag\tPL:$platform_tag\tPU:$lane_tag"
+	#my $sample_id = 'JL001_index2';
+	#my $sample_tag = '1480_0_Brain';
+	#my $readgroup_tag = '120224_HS1A';#one machine run also directory for that run
+	#my $lane_tag = 'CGATGT_L003';#platform unit
+
+opendir(DIR,$fastq_local_dir);
+print "FASTQ DIR:$fastq_local_dir\n";
+my @files = readdir(DIR);#can be compressed or not
+closedir(DIR);
+#
+
+
+my $pair_deliminator_1;
+my $pair_deliminator_2;
+foreach my $file (@files){
+	if ($file =~ m/_R1/ || $file =~ m/_R2/){
+		$pair_deliminator_1 = '_R1';
+		$pair_deliminator_2 = '_R2';
+		last;
+	}
+	if ($file =~ m/_1/ || $file =~ m/_2/){
+		$pair_deliminator_1 = '_1';
+		$pair_deliminator_2 = '_2';
+		last;
+	}
+	print "Could not find fastq pairs for $file\n";
+}
+#if ($origin eq 'UCLA'){
+	#$pair_deliminator_1 = '_R1';
+	#$pair_deliminator_2 = '_R2';
+#}
+#elsif ($origin eq 'GMI'){
+	#$pair_deliminator_1 = '_1';
+	#$pair_deliminator_2 = '_2';
+#}
+#else {
+
+#}
+my %fastq;
+my $temp_index_for_paired_fastq = 1;
+foreach my $file (@files){
+	if ($file =~ m/(.*)$pair_deliminator_1(.*)/){
+		my $temp_pre = $1;
+		my $temp_post = $2;
+		foreach my $temp_file (@files){
+			if ($temp_file =~ m/$temp_pre$pair_deliminator_2$temp_post/){
+				$fastq{1}{$temp_index_for_paired_fastq} = $file;
+				$fastq{2}{$temp_index_for_paired_fastq} = $temp_file;
+				$temp_index_for_paired_fastq++;
+			}	
+		}
+	}
+}
+my $first_pair = $fastq{1}{$index};
+my $second_pair = $fastq{2}{$index};
+print "Index:$index First:$first_pair Second:$second_pair\n";	
+#exit;
+my $defined;
+my $sam_file = "$sample_tag" . "_$index";
+while (!defined $defined){
+	if (-e "$analysis_dir/phase1/merge/$sam_file.sort.bam"){
+		#ValidateSamFile
+		my $command = "$bin_dir/samtools view -c $analysis_dir/phase1/merge/$sam_file.sort.bam";
+		my @args = ("$command");
+		system(@args);
+		my $retval = $? >> 8;
+		unless ($retval == 0){
+			print "The return code is $?\n";
+			print "retval is $retval\n";			
+			`rm $analysis_dir/phase1/merge/$sam_file.sort.bam`;
+			exit 99;
+		}
+		$defined = 1;
+		print "$sam_file.sort.bam exists, process complete.\n";	
+	}
+	else {
+	#
+	#RGID=String	Read Group ID Default value: 1. This option can be set to 'null' to clear the default value.
+		my $RGID = $readgroup_tag;
+	#RGLB=String	Read Group Library Required.
+		my $RGLB = $library_tag;
+	#RGPL=String	Read Group platform (e.g. illumina, solid) Required.
+		my $RGPL = $platform_tag;		
+	#RGPU=String	Read Group platform unit (eg. run barcode) Required.
+		my $RGPU = $lane_tag;
+	#RGSM=String	Read Group sample name Required.
+		my $RGSM = $sample_tag;
+	#RGCN=String	Read Group sequencing center name Default value: null.
+		my $RGCN = $origin;
+	#RGDS=String	Read Group description Default value: null.
+	#RGDT=Iso8601Date	Read Group run date Default value: null.
+		my $tmp_RG_tag = "\@RG\tID:$RGID\tLB:$RGLB\tPL:$RGPL\tPU:$RGPU\tSM:$RGSM";
+		print "Replace readgroup info in $sam_file.aln.bam with:\n$tmp_RG_tag\n";
+		#
+		my $temp_first_pair = $first_pair;
+		my $temp_second_pair = $second_pair;
+		#
+		$temp_first_pair = "$fastq_local_dir/$temp_first_pair";
+		$temp_second_pair = "$fastq_local_dir/$temp_second_pair";
+
+			#Usage:   run-bwamem [options] <idxbase> <file1> [file2]
+			#Options: 
+			 #-o STR    prefix for output files                       [inferred from input]
+			 #-R STR    read group header line such as '@RG\tID:foo\tSM:bar'         [null]
+			 #-x STR    read type: pacbio, ont2d or intractg                      [default]
+					   #intractg: intra-species contig (kb query, highly similar)
+					   #pacbio:   pacbio subreads (~10kb query, high error rate)
+					   #ont2d:    Oxford Nanopore reads (~10kb query, higher error rate)
+			 #-t INT    number of threads                                               [1]
+			 #-H        apply HLA typing
+			 #-a        trim HiSeq2000/2500 PE resequencing adapters (via trimadap)
+			 #-d        mark duplicate (via samblaster)
+			 #-S        for BAM input, don't shuffle
+			 #-s        sort the output alignment (via samtools; requring more RAM)
+			 #-k        keep temporary files generated by typeHLA
+#Output files:
+  #{-o}.aln.bam - final alignment
+  #{-o}.hla.top - best genotypes for the 6 classical HLA genes (if there are HLA-* contigs)
+  #{-o}.hla.all - additional HLA genotypes consistent with data
+  #{-o}.log.*   - log files
+		 
+#run-bwamem -o prefix -t8 -HR"@RG\tID:foo\tSM:bar" hs38DH.fa read1.fq.gz read2.fq.gz
+#/home/dagenteg/Tools/bwakit/bwa mem -p -t8 -R'@RGID:150715_D00108_0365_AC6JMHANXXLB:PE_1090-0PL:IlluminaPU:ATCACG_L008SM:1090-0' /mnt/speed/gilberto/Referance/GRCh37.fasta - 2> 1090-0_6.log.bwamem | /home/dagenteg/Tools/bwakit/samtools view -1 - > 1090-0_6.aln.bam;
+
+		my $command = "$bwa_dir/bwa mem -t8 -R " . '"' . $tmp_RG_tag . '"' . " $reference_genome $temp_first_pair $temp_second_pair | $bwa_dir/samtools view -1 - > $analysis_dir/phase1/merge/$sam_file.aln.bam";
+		print "Starting bwa\n$command\n";
+		my @args = ("$command");
+		system(@args);
+		my $retval = $? >> 8;
+		unless ($retval == 0){
+			exit 99;
+		}
+		
+		#Sort
+		$command = "$bwa_dir/samtools sort $analysis_dir/phase1/merge/$sam_file.aln.bam $analysis_dir/phase1/merge/$sam_file.sort";
+		print "Starting sort\n$command\n";
+		@args = ("$command");
+		system(@args);
+		$retval = $? >> 8;
+		unless ($retval == 0){
+			exit 99;
+		}
+		
+		#print "Replace readgroup info for sorted.bam\n";
+			#
+			#`java -jar $picard_dir/AddOrReplaceReadGroups.jar RGID=Illumina_Simple RGLB=PE_100bp_PG0000698 RGPL=illumina RGPU=Simple RGSM=PG0000698 VERBOSITY=INFO VALIDATION_STRINGENCY=SILENT I=$local_scratch_directory/$sam_file.pre.bam O=$local_scratch_directory/$sam_file.sorted.bam`;						
+				#RGID=String	Read Group ID Default value: 1. This option can be set to 'null' to clear the default value.
+				#RGLB=String	Read Group Library Required.
+				#RGPL=String	Read Group platform (e.g. illumina, solid) Required.
+				#RGPU=String	Read Group platform unit (eg. run barcode) Required.
+				#RGSM=String	Read Group sample name Required.
+				#RGCN=String	Read Group sequencing center name Default value: null.
+				#RGDS=String	Read Group description Default value: null.
+				#RGDT=Iso8601Date	Read Group run date Default value: null.		
+		#$command = "java -jar $picard_dir/AddOrReplaceReadGroups.jar RGID=$RGID RGLB=$RGLB RGPL=$RGPL RGPU=$RGPU RGSM=$RGSM VERBOSITY=INFO VALIDATION_STRINGENCY=SILENT I=$analysis_dir/phase1/merge/$sam_file.bam O=$analysis_dir/phase1/merge/$sam_file.sorted.bam";
+		#print "Replacing read group \@RG tag info\n$command\n";
+		#@args = ("$command");
+		#system(@args);
+		#$retval = $? >> 8;
+		#unless ($retval == 0){
+			#exit 99;
+		#}
+		print "Indexing $analysis_dir/phase1/merge/$sam_file.sort.bam\n";
+		`$bin_dir/samtools index $analysis_dir/phase1/merge/$sam_file.sort.bam`;	
+	}
+}

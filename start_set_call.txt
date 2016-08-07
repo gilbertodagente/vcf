@@ -1,0 +1,226 @@
+##cluster_call.pl
+##my ($call_set, $build, $sample, $bam_location) = split(/\s/);
+#
+#Aicardi
+#
+#Aicardi_ES GRCh37 1231_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1231_0_110724_DNANexus_CCGTCCAT_L002/BAM/1231_0_110724_DNANexus_CCGTCCAT_L002.recalibrated.bam
+#Aicardi_XS GRCh37 1236_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1236_0_100115_ILLUMINA_1A5BF1_NoIndex_L006/BAM/1236_0_100115_ILLUMINA_1A5BF1_NoIndex_L006.recalibrated.bam
+#Aicardi_XS GRCh37 1238_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1238_0_091124_ILLUMINA_1A5BF1_NoIndex_L005/BAM/1238_0_091124_ILLUMINA_1A5BF1_NoIndex_L005.recalibrated.bam
+#Aicardi_XS GRCh37 1251_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1251_0_091124_ILLUMINA_1A5BF1_NoIndex_L008/BAM/1251_0_091124_ILLUMINA_1A5BF1_NoIndex_L008.recalibrated.bam
+#Aicardi_XS GRCh37 1263_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1263_0_100101_AGILENT_NoIndex_L002/BAM/1263_0_100101_AGILENT_NoIndex_L002.recalibrated.bam
+#Aicardi_XS GRCh37 1264_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1264_0_100101_AGILENT_NoIndex_L003/BAM/1264_0_100101_AGILENT_NoIndex_L003.recalibrated.bam
+#Aicardi_XS GRCh37 1271_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1271_0_091124_ILLUMINA_1A5BF1_NoIndex_L007/BAM/1271_0_091124_ILLUMINA_1A5BF1_NoIndex_L007.recalibrated.bam
+#Aicardi_XS GRCh37 1274_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1274_0_100115_ILLUMINA_1A5BF1_NoIndex_L007BAM//1274_0_100115_ILLUMINA_1A5BF1_NoIndex_L007.recalibrated.bam
+#Aicardi_XS GRCh37 1420_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1420_0_091124_ILLUMINA_1A5BF1_NoIndex_L006/BAM/1420_0_091124_ILLUMINA_1A5BF1_NoIndex_L006.recalibrated.bam
+#Aicardi_ES GRCh37 1420_0_Blood /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1420_0_Blood_120725_HS2B_GCCAAT_L003/BAM/1420_0_Blood_120725_HS2B_GCCAAT_L003.recalibrated.bam
+#Aicardi_ES GRCh37 1420_0_Skin /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1420_0_Skin_120725_HS2B_NoIndex_L002/BAM/1420_0_Skin_120725_HS2B_NoIndex_L002.recalibrated.bam
+#Aicardi_ES GRCh37 1420_1 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1420_1_120725_HS2B_CAGATC_L004/BAM/1420_1_120725_HS2B_CAGATC_L004.recalibrated.bam
+#Aicardi_ES GRCh37 1420_2 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1420_2_120725_HS2B_ACTTGA_L004/BAM/1420_2_120725_HS2B_ACTTGA_L004.recalibrated.bam
+#Aicardi_XS GRCh37 1467_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1467_0_100101_AGILENT_NoIndex_L004/BAM/1467_0_100101_AGILENT_NoIndex_L004.recalibrated.bam
+#Aicardi_WGS GRCh37 1480_0_Blood /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_0_Blood_060314_WGS_UW_NoIndex_L001/BAM/1480_0_Blood_060314_WGS_UW_NoIndex_L001.recalibrated.bam
+#Aicardi_ES GRCh37 1480_0_Blood /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_0_Blood_120224_HS1A_TGACCA_L003/BAM/1480_0_Blood_120224_HS1A_TGACCA_L003.recalibrated.bam
+#Aicardi_ES GRCh37 1480_0_Blood /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_0_Blood_120725_HS2B_GATCAG_L003/BAM/1480_0_Blood_120725_HS2B_GATCAG_L003.recalibrated.bam
+#Aicardi_WGS GRCh37 1480_1 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_1_060314_WGS_UW_NoIndex_L003/BAM/1480_1_060314_WGS_UW_NoIndex_L003.recalibrated.bam
+#Aicardi_ES GRCh37 1480_1 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_1_120306_HS1B_ACAGTG_L001/BAM/1480_1_120306_HS1B_ACAGTG_L001.recalibrated.bam
+#Aicardi_WGS GRCh37 1480_2 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_2_060314_WGS_UW_NoIndex_L004/BAM/1480_2_060314_WGS_UW_NoIndex_L004.recalibrated.bam
+#Aicardi_ES GRCh37 1480_2 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_2_120306_HS1B_GCCAAT_L001/BAM/1480_2_120306_HS1B_GCCAAT_L001.recalibrated.bam
+#Aicardi_WGS GRCh37 1480_Brain /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_Brain_060314_WGS_UW_NoIndex_L002/BAM/1480_Brain_060314_WGS_UW_NoIndex_L002.recalibrated.bam
+#Aicardi_ES GRCh37 1480_Brain /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_Brain_120224_HS1A_CGATGT_L003/BAM/1480_Brain_120224_HS1A_CGATGT_L003.recalibrated.bam
+#Aicardi_ES GRCh37 1480_Brain /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_Brain_120418_HSA_GCCAAT_L006/BAM/1480_Brain_120418_HSA_GCCAAT_L006.recalibrated.bam
+#Aicardi_ES GRCh37 1480_Brain /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_Brain_120725_HS2B_NoIndex_L005/BAM/1480_Brain_120725_HS2B_NoIndex_L005.recalibrated.bam
+#Aicardi_ES GRCh37 1480_Brain /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1480_Brain_120809_HS1A_NoIndex_L005/BAM/1480_Brain_120809_HS1A_NoIndex_L005.recalibrated.bam
+#Aicardi_WGS GRCh37 1875_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_0_060314_WGS_UW_NoIndex_L005/BAM/1875_0_060314_WGS_UW_NoIndex_L005.recalibrated.bam
+#Aicardi_ES GRCh37 1875_0 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_0_120725_HS2B_CGATGT_L003/BAM/1875_0_120725_HS2B_CGATGT_L003.recalibrated.bam
+#Aicardi_WGS GRCh37 1875_1 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_1_060314_WGS_UW_NoIndex_L007/BAM/1875_1_060314_WGS_UW_NoIndex_L007.recalibrated.bam
+#Aicardi_ES GRCh37 1875_1 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_1_120725_HS2B_TTAGGC_L004/BAM/1875_1_120725_HS2B_TTAGGC_L004.recalibrated.bam
+#Aicardi_WGS GRCh37 1875_2 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_2_060314_WGS_UW_NoIndex_L006/BAM/1875_2_060314_WGS_UW_NoIndex_L006.recalibrated.bam
+#Aicardi_ES GRCh37 1875_2 /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_2_120725_HS2B_TGACCA_L004/BAM/1875_2_120725_HS2B_TGACCA_L004.recalibrated.bam
+#Aicardi_WGS GRCh37 1875_Brain /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_Brain_060314_WGS_UW_NoIndex_L006/BAM/1875_Brain_060314_WGS_UW_NoIndex_L006.recalibrated.bam
+#Aicardi_ES GRCh37 1875_Brain /mnt/Synology/Experiments/Aicardi/Analysis/Align/GRCh37/1875_Brain_120725_HS2B_NoIndex_L001/BAM/1875_Brain_120725_HS2B_NoIndex_L001.recalibrated.bam
+#
+#Aicardi_WGS_hg38 hg38 1480_0_Blood /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1480_0_Blood_060314_WGS_UW_NoIndex_L001/BAM/1480_0_Blood_060314_WGS_UW_NoIndex_L001.recalibrated.bam
+#Aicardi_WGS_hg38 hg38 1480_Brain /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1480_Brain_060314_WGS_UW_NoIndex_L002/BAM/1480_Brain_060314_WGS_UW_NoIndex_L002.recalibrated.bam
+#Aicardi_WGS_hg38 hg38 1480_1 /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1480_1_060314_WGS_UW_NoIndex_L003/BAM/1480_1_060314_WGS_UW_NoIndex_L003.recalibrated.bam
+#Aicardi_WGS_hg38 hg38 1480_2 /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1480_2_060314_WGS_UW_NoIndex_L004/BAM/1480_2_060314_WGS_UW_NoIndex_L004.recalibrated.bam
+#Aicardi_WGS_hg38 hg38 1875_0 /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1875_0_060314_WGS_UW_NoIndex_L005/BAM/1875_0_060314_WGS_UW_NoIndex_L005.recalibrated.bam
+#Aicardi_WGS_hg38 hg38 1875_Brain /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1875_Brain_060314_WGS_UW_NoIndex_L006/BAM/1875_Brain_060314_WGS_UW_NoIndex_L006.recalibrated.bam
+#Aicardi_WGS_hg38 hg38 1875_1 /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1875_1_060314_WGS_UW_NoIndex_L007/BAM/1875_1_060314_WGS_UW_NoIndex_L007.recalibrated.bam
+#Aicardi_WGS_hg38 hg38 1875_2 /mnt/speed/gilberto/Analysis/Align/hg38/Aicardi/1875_2_060314_WGS_UW_NoIndex_L006/BAM/1875_2_060314_WGS_UW_NoIndex_L006.recalibrated.bam
+#
+##Elliott (Aicardi)
+#
+#1420 hg38 1420_0_Blood /mnt/speed/gilberto/Analysis/Align/1420_0_Blood_120725_HS2B_GCCAAT_L003/BAM/1420_0_Blood_120725_HS2B_GCCAAT_L003.recalibrated.bam
+#1420 hg38 1420_0_Skin /mnt/speed/gilberto/Analysis/Align/1420_0_Skin_120725_HS2B_NoIndex_L002/BAM/1420_0_Skin_120725_HS2B_NoIndex_L002.recalibrated.bam
+#1420 hg38 1420_1 /mnt/speed/gilberto/Analysis/Align/1420_1_120725_HS2B_CAGATC_L004/BAM/1420_1_120725_HS2B_CAGATC_L004.recalibrated.bam
+#1420 hg38 1420_2 /mnt/speed/gilberto/Analysis/Align/1420_2_120725_HS2B_ACTTGA_L004/BAM/1420_2_120725_HS2B_ACTTGA_L004.recalibrated.bam
+#1480 hg38 1480_0_Brain /mnt/speed/gilberto/Analysis/Align/1480_0_Brain_120418_HSA_GCCAAT_L006/BAM/1480_0_Brain_120418_HSA_GCCAAT_L006.recalibrated.bam
+#1480 hg38 1480_0_Brain /mnt/speed/gilberto/Analysis/Align/1480_0_Brain_120725_HS2B_NoIndex_L005/BAM/1480_0_Brain_120725_HS2B_NoIndex_L005.recalibrated.bam
+#1480 hg38 1480_0_Brain /mnt/speed/gilberto/Analysis/Align/1480_0_Brain_120224_HS1A_CGATGT_L003/BAM/1480_0_Brain_120224_HS1A_CGATGT_L003.recalibrated.bam
+#1480 hg38 1480_0_Brain /mnt/speed/gilberto/Analysis/Align/1480_0_Brain_120809_HS1A_NoIndex_L005/BAM/1480_0_Brain_120809_HS1A_NoIndex_L005.recalibrated.bam
+#1480 hg38 1480_0_Blood /mnt/speed/gilberto/Analysis/Align/1480_0_Blood_120224_HS1A_TGACCA_L003/BAM/1480_0_Blood_120224_HS1A_TGACCA_L003.recalibrated.bam
+#1480 hg38 1480_0_Blood /mnt/speed/gilberto/Analysis/Align/1480_0_Blood_120725_HS2B_GATCAG_L003/BAM/1480_0_Blood_120725_HS2B_GATCAG_L003.recalibrated.bam
+#1480 hg38 1480_1 /mnt/speed/gilberto/Analysis/Align/1480_1_120306_HS1B_ACAGTG_L001/BAM/1480_1_120306_HS1B_ACAGTG_L001.recalibrated.bam
+#1480 hg38 1480_2 /mnt/speed/gilberto/Analysis/Align/1480_2_120306_HS1B_GCCAAT_L001/BAM/1480_2_120306_HS1B_GCCAAT_L001.recalibrated.bam
+#1875 hg38 1875_0_Brain /mnt/speed/gilberto/Analysis/Align/1875_0_Brain_120725_HS2B_NoIndex_L001/BAM/1875_0_Brain_120725_HS2B_NoIndex_L001.recalibrated.bam
+#1875 hg38 1875_0_Blood /mnt/speed/gilberto/Analysis/Align/1875_0_Blood_120725_HS2B_CGATGT_L003/BAM/1875_0_Blood_120725_HS2B_CGATGT_L003.recalibrated.bam
+#1875 hg38 1875_1 /mnt/speed/gilberto/Analysis/Align/1875_1_120725_HS2B_TTAGGC_L004/BAM/1875_1_120725_HS2B_TTAGGC_L004.recalibrated.bam
+#1875 hg38 1875_2 /mnt/speed/gilberto/Analysis/Align/1875_2_120725_HS2B_TGACCA_L004/BAM/1875_2_120725_HS2B_TGACCA_L004.recalibrated.bam
+#
+#(current location on IHG cluster for original BAM files)
+#
+#Aicardi_WGS GRCh37 1480_0_Brain /mnt/speed/gilberto/Analysis/Call/GRCh37/1480/BAM/1480_0_Brain/1480-0brain.94226.bam
+#Aicardi_WGS GRCh37 1480_0_Blood /mnt/speed/gilberto/Analysis/Call/GRCh37/1480/BAM/1480_0_Blood/1480-0.94227.bam
+#Aicardi_WGS GRCh37 1480_1 /mnt/speed/gilberto/Analysis/Call/GRCh37/1480/BAM/1480_1/1480-1.94228.bam
+#Aicardi_WGS GRCh37 1480_2 /mnt/speed/gilberto/Analysis/Call/GRCh37/1480/BAM/1480_2/1480-2.94229.bam
+#Aicardi_WGS GRCh37 1875_0_Brain /mnt/speed/gilberto/Analysis/Call/GRCh37/1875/BAM/1875_0_Brain/1875-0brain.94230.bam
+#Aicardi_WGS GRCh37 1875_0_Blood /mnt/speed/gilberto/Analysis/Call/GRCh37/1875/BAM/1875_0_Blood/1875-0.94231.bam
+#Aicardi_WGS GRCh37 1875_1 /mnt/speed/gilberto/Analysis/Call/GRCh37/1875/BAM/1875_1/1875-1.94232.bam
+#Aicardi_WGS GRCh37 1875_2 /mnt/speed/gilberto/Analysis/Call/GRCh37/1875/BAM/1875_2/1875-2.94233.bam
+#
+#(transfered bam files from GeneHunter below)
+#
+#Aicardi_WGS GRCh37 1480_0_Brain /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Brain/060314_WGS_UW/BAM/1480-0brain.94226.bam
+#Aicardi_WGS GRCh37 1480_0_Blood /mnt/Synology/Experiments/Aicardi/Experiments/1480_0_Blood/060314_WGS_UW/BAM/1480-0.94227.bam
+#Aicardi_WGS GRCh37 1480_1 /mnt/Synology/Experiments/Aicardi/Experiments/1480_1/060314_WGS_UW/BAM/1480-1.94228.bam
+#Aicardi_WGS GRCh37 1480_2 /mnt/Synology/Experiments/Aicardi/Experiments/1480_2/060314_WGS_UW/BAM/1480-2.94229.bam
+#Aicardi_WGS GRCh37 1875_0_Brain /mnt/Synology/Experiments/Aicardi/Experiments/1875_0_Brain/060314_WGS_UW/BAM/1875-0brain.94230.bam
+#Aicardi_WGS GRCh37 1875_0_Blood /mnt/Synology/Experiments/Aicardi/Experiments/1875_0_Blood/060314_WGS_UW/BAM/1875-0.94231.bam
+#Aicardi_WGS GRCh37 1875_1 /mnt/Synology/Experiments/Aicardi/Experiments/1875_1/060314_WGS_UW/BAM/1875-1.94232.bam
+#Aicardi_WGS GRCh37 1875_2 /mnt/Synology/Experiments/Aicardi/Experiments/1875_2/060314_WGS_UW/BAM/1875-2.94233.bam
+#
+##Elysa Marco (10 trios of kids with sensory processing disorders)
+#
+Sensory GRCh37 428 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/428_C5M2RANXX_ACAGTG_L008/BAM/428_C5M2RANXX_ACAGTG_L008.recalibrated.bam
+Sensory GRCh37 428-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/428-1_C5M2RANXX_GCCAAT_L008/BAM/428-1_C5M2RANXX_GCCAAT_L008.recalibrated.bam
+Sensory GRCh37 428-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/428-2_C5M2RANXX_CAGATC_L008/BAM/428-2_C5M2RANXX_CAGATC_L008.recalibrated.bam
+Sensory GRCh37 983 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/983_C5M2RANXX_ATCACG_L001/BAM/983_C5M2RANXX_ATCACG_L001.recalibrated.bam
+Sensory GRCh37 983-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/983-1_C5M2RANXX_CGATGT_L001/BAM/983-1_C5M2RANXX_CGATGT_L001.recalibrated.bam
+Sensory GRCh37 983-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/983-2_C5M2RANXX_CTTGTA_L003/BAM/983-2_C5M2RANXX_CTTGTA_L003.recalibrated.bam
+Sensory GRCh37 10149 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10149_C5M2RANXX_TTAGGC_L001/BAM/10149_C5M2RANXX_TTAGGC_L001.recalibrated.bam
+Sensory GRCh37 10149-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10149-1_C5M2RANXX_TGACCA_L001/BAM/10149-1_C5M2RANXX_TGACCA_L001.recalibrated.bam
+Sensory GRCh37 10149-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10149-2_C5M2RANXX_ACAGTG_L002/BAM/10149-2_C5M2RANXX_ACAGTG_L002.recalibrated.bam
+Sensory GRCh37 10040 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10040_C5M2RANXX_GCCAAT_L002/BAM/10040_C5M2RANXX_GCCAAT_L002.recalibrated.bam
+Sensory GRCh37 10040-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10040-1_C5M2RANXX_ACTTGA_L002/BAM/10040-1_C5M2RANXX_ACTTGA_L002.recalibrated.bam
+Sensory GRCh37 10040-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10040-2_C5M2RANXX_CAGATC_L002/BAM/10040-2_C5M2RANXX_CAGATC_L002.recalibrated.bam
+Sensory GRCh37 628 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/628_C5M2RANXX_GATCAG_L003/BAM/628_C5M2RANXX_GATCAG_L003.recalibrated.bam
+Sensory GRCh37 628-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/628-1_C5M2RANXX_TAGCTT_L003/BAM/628-1_C5M2RANXX_TAGCTT_L003.recalibrated.bam
+Sensory GRCh37 628-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/628-2_C5M2RANXX_GGCTAC_L003/BAM/628-2_C5M2RANXX_GGCTAC_L003.recalibrated.bam
+Sensory GRCh37 10167 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10167_C5M2RANXX_TGACCA_L004/BAM/10167_C5M2RANXX_TGACCA_L004.recalibrated.bam
+Sensory GRCh37 10167-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10167-1_C5M2RANXX_ACAGTG_L005/BAM/10167-1_C5M2RANXX_ACAGTG_L005.recalibrated.bam
+Sensory GRCh37 10167-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10167-2_C5M2RANXX_GCCAAT_L005/BAM/10167-2_C5M2RANXX_GCCAAT_L005.recalibrated.bam
+Sensory GRCh37 522 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/522_C5M2RANXX_ATCACG_L004/BAM/522_C5M2RANXX_ATCACG_L004.recalibrated.bam
+Sensory GRCh37 522-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/522-1_C5M2RANXX_CGATGT_L004/BAM/522-1_C5M2RANXX_CGATGT_L004.recalibrated.bam
+Sensory GRCh37 522-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/522-2_C5M2RANXX_TTAGGC_L004/BAM/522-2_C5M2RANXX_TTAGGC_L004.recalibrated.bam
+Sensory GRCh37 10038 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10038_C5M2RANXX_CAGATC_L005/BAM/10038_C5M2RANXX_CAGATC_L005.recalibrated.bam
+Sensory GRCh37 10038-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10038-1_C5M2RANXX_ACTTGA_L005/BAM/10038-1_C5M2RANXX_ACTTGA_L005.recalibrated.bam
+Sensory GRCh37 10038-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10038-2_C5M2RANXX_GATCAG_L006/BAM/10038-2_C5M2RANXX_GATCAG_L006.recalibrated.bam
+Sensory GRCh37 10035 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10035_C5M2RANXX_TAGCTT_L006/BAM/10035_C5M2RANXX_TAGCTT_L006.recalibrated.bam
+Sensory GRCh37 10035-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10035-1_C5M2RANXX_CTTGTA_L006/BAM/10035-1_C5M2RANXX_CTTGTA_L006.recalibrated.bam
+Sensory GRCh37 10035-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10035-2_C5M2RANXX_ATCACG_L007/BAM/10035-2_C5M2RANXX_ATCACG_L007.recalibrated.bam
+Sensory GRCh37 10170 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10170_C5M2RANXX_CGATGT_L007/BAM/10170_C5M2RANXX_CGATGT_L007.recalibrated.bam
+Sensory GRCh37 10170-1 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10170-1_C5M2RANXX_TTAGGC_L007/BAM/10170-1_C5M2RANXX_TTAGGC_L007.recalibrated.bam
+Sensory GRCh37 10170-2 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10170-2_C5M2RANXX_TGACCA_L007/BAM/10170-2_C5M2RANXX_TGACCA_L007.recalibrated.bam
+Sensory GRCh37 10113 /mnt/Synology/Experiments/MarcoE/Sensory/Align/GRCh37/10113_C5M2RANXX_GGCTAC_L006/BAM/10113_C5M2RANXX_GGCTAC_L006.recalibrated.bam
+#
+##Elliott Clinical 1881-0
+#
+#1881 GRCh37 1881_0 /mnt/Synology/Experiments/Clinical/Single/Experiments/PG0000698/BAM/PG0000698_cluster.recalibrated.bam
+#
+##Milo
+#
+#Milo GRCh37 1302045 /mnt/speed/gilberto/Analysis/Align/1302045_6_9_2014_Karen_GeneDX_SureSelectV4/BAM/1302045_6_9_2014_Karen_GeneDX_SureSelectV4.recalibrated.bam
+#Milo GRCh37 1302046 /mnt/speed/gilberto/Analysis/Align/1302046_6_9_2014_Karen_GeneDX_SureSelectV4/BAM/1302046_6_9_2014_Karen_GeneDX_SureSelectV4.recalibrated.bam
+#Milo GRCh37 1302047 /mnt/speed/gilberto/Analysis/Align/1302047_6_9_2014_Karen_GeneDX_SureSelectV4/BAM/1302047_6_9_2014_Karen_GeneDX_SureSelectV4.recalibrated.bam
+#
+#Milo hg38 1302045 /mnt/speed/gilberto/Analysis/Align/hg38/Fam/1302045_6_9_2014_Karen_GeneDX_SureSelectV4/BAM/1302045_6_9_2014_Karen_GeneDX_SureSelectV4.recalibrated.bam
+#Milo hg38 1302046 /mnt/speed/gilberto/Analysis/Align/hg38/Fam/1302046_6_9_2014_Karen_GeneDX_SureSelectV4/BAM/1302046_6_9_2014_Karen_GeneDX_SureSelectV4.recalibrated.bam
+#Milo hg38 1302047 /mnt/speed/gilberto/Analysis/Align/hg38/Fam/1302047_6_9_2014_Karen_GeneDX_SureSelectV4/BAM/1302047_6_9_2014_Karen_GeneDX_SureSelectV4.recalibrated.bam
+#
+##Sahar
+#
+#Sahar GRCh37 1484_2 /mnt/speed/gilberto/Analysis/Align/1484_2_052114_C423GACXX_GGCTAC_L007/BAM/1484_2_052114_C423GACXX_GGCTAC_L007.recalibrated.bam
+#Sahar GRCh37 1484_1 /mnt/speed/gilberto/Analysis/Align/1484_1_052114_C423GACXX_TAGCTT_L007/BAM/1484_1_052114_C423GACXX_TAGCTT_L007.recalibrated.bam
+#Sahar GRCh37 1484_0 /mnt/speed/gilberto/Analysis/Align/1484_0_052114_C423GACXX_GATCAG_L007/BAM/1484_0_052114_C423GACXX_GATCAG_L007.recalibrated.bam
+#Sahar GRCh37 1172_0 /mnt/speed/gilberto/Analysis/Align/1172_0_052114_C423GACXX_CTTGTA_L007/BAM/1172_0_052114_C423GACXX_CTTGTA_L007.recalibrated.bam
+#Sahar GRCh37 10B /mnt/speed/gilberto/Analysis/Align/10B_052114_C423GACXX_TGACCA_L006/BAM/10B_052114_C423GACXX_TGACCA_L006.recalibrated.bam
+#Sahar GRCh37 6B /mnt/speed/gilberto/Analysis/Align/6B_052114_C423GACXX_ACAGTG_L006/BAM/6B_052114_C423GACXX_ACAGTG_L006.recalibrated.bam
+#Sahar GRCh37 3B /mnt/speed/gilberto/Analysis/Align/3B_052114_C423GACXX_TTAGCC_L006/BAM/3B_052114_C423GACXX_TTAGCC_L006.recalibrated.bam
+#Sahar GRCh37 20B /mnt/speed/gilberto/Analysis/Align/20B_052114_C423GACXX_CGATGT_L005/BAM/20B_052114_C423GACXX_CGATGT_L005.recalibrated.bam
+#Sahar GRCh37 16B /mnt/speed/gilberto/Analysis/Align/16B_052114_C423GACXX_ATCACG_L005/BAM/16B_052114_C423GACXX_ATCACG_L005.recalibrated.bam
+#Sahar GRCh37 15B /mnt/speed/gilberto/Analysis/Align/15B_052114_C423GACXX_CTTGTA_L005/BAM/15B_052114_C423GACXX_CTTGTA_L005.recalibrated.bam
+#
+##GMI Clinical Exome
+#
+#R14_13657
+#
+#R14_13657 hg38 SN01484 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01484_AH9UNPADXX_NoIndex_L002/BAM/SN01484_AH9UNPADXX_NoIndex_L002.recalibrated.bam
+#R14_13657 hg38 SN01484 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01484_BH9UTAADXX_NoIndex_L002/BAM/SN01484_BH9UTAADXX_NoIndex_L002.recalibrated.bam
+#R14_13657 hg38 SN01485 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01485_AH9UNPADXX_NoIndex_L004/BAM/SN01485_AH9UNPADXX_NoIndex_L004.recalibrated.bam
+#R14_13657 hg38 SN01485 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01485_BH9UTAADXX_NoIndex_L004/BAM/SN01485_BH9UTAADXX_NoIndex_L004.recalibrated.bam
+#R14_13657 hg38 SN01486 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01486_AH9UNPADXX_NoIndex_L006/BAM/SN01486_AH9UNPADXX_NoIndex_L006.recalibrated.bam
+#R14_13657 hg38 SN01486 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01486_BH9UTAADXX_NoIndex_L006/BAM/SN01486_BH9UTAADXX_NoIndex_L006.recalibrated.bam
+#
+#R14_13657 GRCh37 SN01484 /mnt/speed/gilberto/Analysis/Align/GRCh37/R14_13657/SN01484_AH9UNPADXX_NoIndex_L002/BAM/SN01484_AH9UNPADXX_NoIndex_L002.recalibrated.bam
+#R14_13657 GRCh37 SN01484 /mnt/speed/gilberto/Analysis/Align/GRCh37/R14_13657/SN01484_BH9UTAADXX_NoIndex_L002/BAM/SN01484_BH9UTAADXX_NoIndex_L002.recalibrated.bam
+#R14_13657 GRCh37 SN01485 /mnt/speed/gilberto/Analysis/Align/GRCh37/R14_13657/SN01485_AH9UNPADXX_NoIndex_L004/BAM/SN01485_AH9UNPADXX_NoIndex_L004.recalibrated.bam
+#R14_13657 GRCh37 SN01485 /mnt/speed/gilberto/Analysis/Align/GRCh37/R14_13657/SN01485_BH9UTAADXX_NoIndex_L004/BAM/SN01485_BH9UTAADXX_NoIndex_L004.recalibrated.bam
+#R14_13657 GRCh37 SN01486 /mnt/speed/gilberto/Analysis/Align/GRCh37/R14_13657/SN01486_AH9UNPADXX_NoIndex_L006/BAM/SN01486_AH9UNPADXX_NoIndex_L006.recalibrated.bam
+#R14_13657 GRCh37 SN01486 /mnt/speed/gilberto/Analysis/Align/GRCh37/R14_13657/SN01486_BH9UTAADXX_NoIndex_L006/BAM/SN01486_BH9UTAADXX_NoIndex_L006.recalibrated.bam
+#
+#R14_13657(from bam)
+#
+#R14_13657 hg38 SN01484 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01484_R14_13657_UCLA/BAM/SN01484_R14_13657_UCLA.recalibrated.bam
+#R14_13657 hg38 SN01485 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01485_R14_13657_UCLA/BAM/SN01485_R14_13657_UCLA.recalibrated.bam
+#R14_13657 hg38 SN01486 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13657/SN01486_R14_13657_UCLA/BAM/SN01486_R14_13657_UCLA.recalibrated.bam
+#
+#R13-42253
+#
+#R13_42253 hg38 SN01204 /mnt/speed/gilberto/Analysis/SN01204_BH8U29ADXX_NoIndex_L002/BAM/SN01204_BH8U29ADXX_NoIndex_L002.recalibrated.bam
+#R13_42253 hg38 SN01205 /mnt/speed/gilberto/Analysis/SN01205_BH8U29ADXX_NoIndex_L004/BAM/SN01205_BH8U29ADXX_NoIndex_L004.recalibrated.bam
+#R13_42253 hg38 SN01206 /mnt/speed/gilberto/Analysis/SN01206_BH8U29ADXX_NoIndex_L006/BAM/SN01206_BH8U29ADXX_NoIndex_L006.recalibrated.bam
+#R13_42253 hg38 SN01204 /mnt/speed/gilberto/Analysis/SN01204_AH8TNGADXX_NoIndex_L002/BAM/SN01204_AH8TNGADXX_NoIndex_L002.recalibrated.bam
+#R13_42253 hg38 SN01205 /mnt/speed/gilberto/Analysis/SN01205_AH8TNGADXX_NoIndex_L004/BAM/SN01205_AH8TNGADXX_NoIndex_L004.recalibrated.bam
+#R13_42253 hg38 SN01206 /mnt/speed/gilberto/Analysis/SN01206_AH8TNGADXX_NoIndex_L006/BAM/SN01206_AH8TNGADXX_NoIndex_L006.recalibrated.bam
+#
+#R13_42253 GRCh37 SN01204 /mnt/speed/gilberto/Analysis/SN01204_BH8U29ADXX_NoIndex_L002/BAM/SN01204_BH8U29ADXX_NoIndex_L002.recalibrated.bam
+#R13_42253 GRCh37 SN01205 /mnt/speed/gilberto/Analysis/SN01205_BH8U29ADXX_NoIndex_L004/BAM/SN01205_BH8U29ADXX_NoIndex_L004.recalibrated.bam
+#R13_42253 GRCh37 SN01206 /mnt/speed/gilberto/Analysis/SN01206_BH8U29ADXX_NoIndex_L006/BAM/SN01206_BH8U29ADXX_NoIndex_L006.recalibrated.bam
+#R13_42253 GRCh37 SN01204 /mnt/speed/gilberto/Analysis/SN01204_AH8TNGADXX_NoIndex_L002/BAM/SN01204_AH8TNGADXX_NoIndex_L002.recalibrated.bam
+#R13_42253 GRCh37 SN01205 /mnt/speed/gilberto/Analysis/SN01205_AH8TNGADXX_NoIndex_L004/BAM/SN01205_AH8TNGADXX_NoIndex_L004.recalibrated.bam
+#R13_42253 GRCh37 SN01206 /mnt/speed/gilberto/Analysis/SN01206_AH8TNGADXX_NoIndex_L006/BAM/SN01206_AH8TNGADXX_NoIndex_L006.recalibrated.bam
+#
+#R14_13641
+#
+#R14_13641 GRCh37 1402938 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13641/1402938_R14_13641_GeneDX_SureSelectV4/BAM/1402938_R14_13641_GeneDX_SureSelectV4.recalibrated.bam
+#R14_13641 GRCh37 1404083 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13641/1404083_R14_13641_GeneDX_SureSelectV4/BAM/1404083_R14_13641_GeneDX_SureSelectV4.recalibrated.bam
+#R14_13641 GRCh37 1404084 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13641/1404084_R14_13641_GeneDX_SureSelectV4/BAM/1404084_R14_13641_GeneDX_SureSelectV4.recalibrated.bam
+#
+#R14_13641 hg38 1402938 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13641/1402938_R14_13641_GeneDX_SureSelectV4/BAM/1402938_R14_13641_GeneDX_SureSelectV4.recalibrated.bam
+#R14_13641 hg38 1404083 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13641/1404083_R14_13641_GeneDX_SureSelectV4/BAM/1404083_R14_13641_GeneDX_SureSelectV4.recalibrated.bam
+#R14_13641 hg38 1404084 /mnt/speed/gilberto/Analysis/Align/hg38/R14_13641/1404084_R14_13641_GeneDX_SureSelectV4/BAM/1404084_R14_13641_GeneDX_SureSelectV4.recalibrated.bam
+#
+##1KG hg38
+#
+#R14_13657 hg38 HG01688 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/HG01688_SRR702063_130116_SN601_0392_BD0B35ACXX_4_ID03/BAM/HG01688_SRR702063_130116_SN601_0392_BD0B35ACXX_4_ID03.recalibrated.bam
+#R14_13657 hg38 HG01606 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/HG01606_SRR711359_130117_SN805_0316_AD1MN1ACXX_2_ID02/BAM/HG01606_SRR711359_130117_SN805_0316_AD1MN1ACXX_2_ID02.recalibrated.bam
+#R14_13657 hg38 HG01777 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/HG01777_SRR711363_130117_SN805_0316_AD1MN1ACXX_2_ID04/BAM/HG01777_SRR711363_130117_SN805_0316_AD1MN1ACXX_2_ID04.recalibrated.bam
+#R14_13657 hg38 NA12154 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/NA12154_SRR702067_130108_SN738_0346_AC1H6GACXX_1_ID06/BAM/NA12154_SRR702067_130108_SN738_0346_AC1H6GACXX_1_ID06.recalibrated.bam
+#R14_13657 hg38 NA12005 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/NA12005_SRR718067_130118_SN142_0640_AC1HT3ACXX_8_ID11/BAM/NA12005_SRR718067_130118_SN142_0640_AC1HT3ACXX_8_ID11.recalibrated.bam
+#R14_13657 hg38 NA11830 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/NA11830_SRR766026_130126_SN738_0353_BC1M7KACXX_5_ID09/BAM/NA11830_SRR766026_130126_SN738_0353_BC1M7KACXX_5_ID09.recalibrated.bam
+#R14_13657 hg38 NA10851 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/NA10851_SRR766044_130122_SN7001353_0155_BC1MNDACXX_7_ID11/BAM/NA10851_SRR766044_130122_SN7001353_0155_BC1MNDACXX_7_ID11.recalibrated.bam
+#R14_13657 hg38 NA19005 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/NA19005_SRR715906_130121_SN738_0351_AD1MJUACXX_4_ID07/BAM/NA19005_SRR715906_130121_SN738_0351_AD1MJUACXX_4_ID07.recalibrated.bam
+#R14_13657 hg38 NA18939 /coldstorage/gilberto/Processed/Alignment/hg38/1KG/NA18939_SRR766031_130122_SN7001353_0155_BC1MNDACXX_4_ID02/BAM/NA18939_SRR766031_130122_SN7001353_0155_BC1MNDACXX_4_ID02.recalibrated.bam
+#
+#snap_1kg hg38 NA18939 /mnt/speed/gilberto/Analysis/Align/hg38/1KG/NA18939_SRR766031_130122_SN7001353_0155_BC1MNDACXX_4_ID02/BAM/NA18939_SRR766031_130122_SN7001353_0155_BC1MNDACXX_4_ID02.recalibrated.bam
+#
+##1KG GRCh37
+#
+#R14_13657 GRCh37 HG01688 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/HG01688_SRR702063_130116_SN601_0392_BD0B35ACXX_4_ID03/BAM/HG01688_SRR702063_130116_SN601_0392_BD0B35ACXX_4_ID03.recalibrated.bam
+#R14_13657 GRCh37 HG01606 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/HG01606_SRR711359_130117_SN805_0316_AD1MN1ACXX_2_ID02/BAM/HG01606_SRR711359_130117_SN805_0316_AD1MN1ACXX_2_ID02.recalibrated.bam
+#R14_13657 GRCh37 HG01777 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/HG01777_SRR711363_130117_SN805_0316_AD1MN1ACXX_2_ID04/BAM/HG01777_SRR711363_130117_SN805_0316_AD1MN1ACXX_2_ID04.recalibrated.bam
+#R14_13657 GRCh37 NA12154 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/NA12154_SRR702067_130108_SN738_0346_AC1H6GACXX_1_ID06/BAM/NA12154_SRR702067_130108_SN738_0346_AC1H6GACXX_1_ID06.recalibrated.bam
+#R14_13657 GRCh37 NA12005 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/NA12005_SRR718067_130118_SN142_0640_AC1HT3ACXX_8_ID11/BAM/NA12005_SRR718067_130118_SN142_0640_AC1HT3ACXX_8_ID11.recalibrated.bam
+#R14_13657 GRCh37 NA11830 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/NA11830_SRR766026_130126_SN738_0353_BC1M7KACXX_5_ID09/BAM/NA11830_SRR766026_130126_SN738_0353_BC1M7KACXX_5_ID09.recalibrated.bam
+#R14_13657 GRCh37 NA10851 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/NA10851_SRR766044_130122_SN7001353_0155_BC1MNDACXX_7_ID11/BAM/NA10851_SRR766044_130122_SN7001353_0155_BC1MNDACXX_7_ID11.recalibrated.bam
+#R14_13657 GRCh37 NA19005 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/NA19005_SRR715906_130121_SN738_0351_AD1MJUACXX_4_ID07/BAM/NA19005_SRR715906_130121_SN738_0351_AD1MJUACXX_4_ID07.recalibrated.bam
+#R14_13657 GRCh37 NA18939 /coldstorage/gilberto/Processed/Alignment/GRCh37/1KG/NA18939_SRR766031_130122_SN7001353_0155_BC1MNDACXX_4_ID02/BAM/NA18939_SRR766031_130122_SN7001353_0155_BC1MNDACXX_4_ID02.recalibrated.bam
